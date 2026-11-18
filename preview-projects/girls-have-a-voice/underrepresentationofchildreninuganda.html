@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A rights-based guide to strengthening girls' meaningful participation in decisions across Uganda.">
+  <meta name="theme-color" content="#163b32">
+  <title>Girls Have a Voice | Participation in Uganda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --forest: #923b5b;
+      --forest-light: #ad496b;
+      --paper: #fff8fa;
+      --white: #fff;
+      --ink: #382d32;
+      --muted: #6b5960;
+      --line: #f0d5df;
+      --leaf: #f8d5e0;
+      --sun: #e7ad73;
+      --red: #a83d67;
+      --soft-green: #fff0f4;
+      --soft-yellow: #fff5f2;
+      --shadow: 0 18px 50px rgb(146 59 91 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.7 "DM Sans", sans-serif;
+    }
+
+    a { color: inherit; }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--sun);
+      outline-offset: 4px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1, h2, h3 {
+      font-family: "Manrope", sans-serif;
+      line-height: 1.16;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -.045em;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -60px;
+      left: 16px;
+      z-index: 20;
+      padding: 10px 14px;
+      color: var(--ink);
+      background: var(--white);
+      border-radius: 6px;
+    }
+
+    .skip-link:focus { top: 12px; }
+
+    .site-header {
+      position: absolute;
+      z-index: 5;
+      top: 0;
+      left: 0;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 22px 7%;
+      color: var(--white);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: inherit;
+      font: 800 1rem "Manrope", sans-serif;
+      letter-spacing: .04em;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--forest);
+      background: var(--leaf);
+      font-size: .78rem;
+      letter-spacing: 0;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 23px;
+    }
+
+    nav a {
+      color: var(--white);
+      font-size: .92rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    .hero {
+      position: relative;
+      display: flex;
+      min-height: 690px;
+      align-items: center;
+      overflow: hidden;
+      padding: 145px 7% 95px;
+      color: var(--white);
+      background:
+        radial-gradient(ellipse at 86% 22%, rgb(255 255 255 / 75%), transparent 30%),
+        linear-gradient(120deg, #ffe8ef, #f8d5e0 70%, #f3c5d5);
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -100px;
+      bottom: -240px;
+      width: 620px;
+      height: 620px;
+      border: 1px solid rgb(255 255 255 / 13%);
+      border-radius: 50%;
+      box-shadow: 0 0 0 55px rgb(255 255 255 / 3%),
+                  0 0 0 110px rgb(255 255 255 / 3%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 850px;
+    }
+
+    .eyebrow {
+      margin-bottom: 14px;
+      color: #923b5b;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .hero .eyebrow { color: var(--leaf); }
+
+    h1 {
+      max-width: 820px;
+      margin: 0;
+      font-size: clamp(3rem, 7.5vw, 6.4rem);
+      letter-spacing: -.065em;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+      margin: 25px 0 30px;
+      color: #59464e;
+      font-size: clamp(1.05rem, 2vw, 1.2rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 22px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 19px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      color: #fff;
+      background: #a83d67;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      background: #923b5b;
+    }
+
+    .text-link {
+      color: #743047;
+      font-weight: 600;
+      text-underline-offset: 4px;
+    }
+
+    .hero-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 52px;
+      color: #d8e5dc;
+      font-size: .88rem;
+    }
+
+    .hero-note strong {
+      color: #923b5b;
+      font-size: 1.2rem;
+    }
+
+    main section { padding: 86px 7%; }
+
+    .section-inner {
+      width: min(1120px, 100%);
+      margin-inline: auto;
+    }
+
+    .section-intro {
+      max-width: 760px;
+      margin-bottom: 38px;
+    }
+
+    .section-intro > p:last-child { color: var(--muted); }
+
+    .overview {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      align-items: start;
+      gap: 70px;
+    }
+
+    .overview-copy p { color: var(--muted); }
+
+    .pull-quote {
+      margin: 0;
+      padding: 28px 30px;
+      border-left: 4px solid var(--sun);
+      border-radius: 0 10px 10px 0;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      font: 600 1.22rem/1.55 "Manrope", sans-serif;
+    }
+
+    .pull-quote cite {
+      display: block;
+      margin-top: 16px;
+      color: var(--muted);
+      font: 500 .85rem/1.5 "DM Sans", sans-serif;
+    }
+
+    .principles {
+      background: #fff0f4;
+    }
+
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .principle-card {
+      min-height: 220px;
+      padding: 25px;
+      border: 1px solid #f0d5df;
+      border-radius: 12px;
+      background: var(--white);
+    }
+
+    .principle-card .number {
+      display: inline-grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      color: var(--forest);
+      background: var(--leaf);
+      font-size: .85rem;
+      font-weight: 800;
+    }
+
+    .principle-card p {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .barriers-layout {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .barriers-layout > div > p { color: var(--muted); }
+
+    .barrier-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .barrier-list li {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 15px;
+      align-items: start;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--white);
+    }
+
+    .barrier-icon {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border-radius: 9px;
+      color: #923b5b;
+      background: #fce4ec;
+      font-weight: 800;
+    }
+
+    .barrier-list strong { display: block; margin-bottom: 3px; }
+    .barrier-list span:last-child { color: var(--muted); font-size: .94rem; }
+
+    .roadmap {
+      color: #382d32;
+      background: #fce4ec;
+    }
+
+    .roadmap .eyebrow,
+    .roadmap .step::before { color: #923b5b; }
+
+    .roadmap .section-intro > p:last-child,
+    .step p,
+    .timeline-note { color: #59464e; }
+
+    .step {
+      border-color: #edc9d6;
+      background: rgb(255 255 255 / 70%);
+    }
+
+    .resources {
+      color: #382d32;
+      background: #fff0f4;
+    }
+
+    .resources .eyebrow,
+    .resource-card span { color: #923b5b; }
+
+    .resources .section-intro > p:last-child,
+    .resource-card small { color: #59464e; }
+
+    .resource-card {
+      color: #382d32;
+      border-color: #edc9d6;
+      background: #fff;
+    }
+
+    .resource-card:hover { background: #ffe8ef; }
+
+    .closing {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 50px 7%;
+      background: #f8d5e0;
+    }
+
+    .closing-inner {
+      display: flex;
+      width: min(1120px, 100%);
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      margin: auto;
+    }
+
+    .closing h2 {
+      max-width: 680px;
+      margin: 0;
+      font-size: clamp(1.8rem, 3.5vw, 2.7rem);
+    }
+
+    .closing .button {
+      flex: 0 0 auto;
+      color: #fff;
+      background: #a83d67;
+    }
+
+    .closing .button:hover { background: #923b5b; }
+
+    footer {
+      padding: 24px 7%;
+      color: #59464e;
+      background: #ffe8ef;
+      font-size: .86rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      width: min(1120px, 100%);
+      justify-content: space-between;
+      gap: 20px;
+      margin: auto;
+    }
+
+    footer p { margin: 0; }
+
+    @media (max-width: 850px) {
+      .overview, .barriers-layout, .measurement, .safety-panel {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .principles-grid, .resource-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+        padding: 18px 6%;
+      }
+
+      nav { gap: 8px 16px; }
+      nav a { font-size: .84rem; }
+
+      .hero {
+        min-height: 680px;
+        padding: 170px 6% 75px;
+      }
+
+      main section { padding: 64px 6%; }
+      .principles-grid, .steps, .resource-grid { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+      .safety-panel { padding: 24px; }
+      .safety-list { grid-template-columns: 1fr; }
+      .closing { padding: 38px 6%; }
+      .closing-inner, .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Children Have a Voice, home">
+      <span class="brand-mark" aria-hidden="true">CHV</span>
+      CHILDREN HAVE A VOICE
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="#issue">The issue</a>
+      <a href="#principles">Principles</a>
+      <a href="#plan">Action plan</a>
+      <a href="#resources">Resources</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-content">
+        <p class="eyebrow">A rights-based participation initiative · Uganda</p>
+        <h1>Decisions about girls should include girls.</h1>
+        <p class="hero-copy">
+          Girls have insight into the decisions shaping their education, safety,
+          health, and futures. This initiative helps schools, communities, civil
+          society, and public institutions listen to girls and reflect their views
+          in decisions.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#plan">Explore the action plan</a>
+          <a class="text-link" href="#issue">Understand the challenge ↓</a>
+        </div>
+        <p class="hero-note">
+          <strong aria-hidden="true">✳</strong>
+          Meaningful participation is safe, inclusive, voluntary, and followed by feedback.
+        </p>
+      </div>
+    </section>
+
+    <section id="issue">
+      <div class="section-inner overview">
+        <div>
+          <p class="eyebrow">01 · The issue</p>
+          <h2>Being affected by a decision is not the same as having a say in it.</h2>
+        </div>
+
+        <div class="overview-copy">
+          <p>
+            Decisions at home, in schools, health services, and local communities
+            shape girls’ education, safety, wellbeing, and opportunities. Yet girls
+            may have limited access to the spaces where these decisions are discussed
+            or made.
+          </p>
+          <p>
+            Girls are not a single, uniform group. Age, disability, location,
+            language, family circumstances, and other experiences can affect whose
+            views are heard. Meaningful representation makes space for this diversity
+            and shows girls how their contributions were considered.
+          </p>
+          <blockquote class="pull-quote">
+            Participation is meaningful when children can express views freely
+            and receive a clear response about how those views were considered.
+            <cite>— A practical interpretation of children’s participation rights</cite>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles" id="principles">
+      <div class="section-inner">
+        <div class="section-intro">
+          <p class="eyebrow">02 · A shared standard</p>
+          <h2>From presence to influence.</h2>
+          <p>
+            Strong participation is a process—not a one-off consultation.
+            These principles can guide planning, facilitation, decision-making,
+            and follow-up.
+          </p>
+        </div>
+
+        <div class="principles-grid">
+          <article class="principle-card">
+            <span class="number">01</span>
+            <h3>Accessible and inclusive</h3>
+            <p>
+              Offer different ways to contribute and address barriers related
+              to language, disability, age, location, time, and access to
+              information.
+            </p>
+          </article>
+
+          <article class="principle-card">
+            <span class="number">02</span>
+            <h3>Safe and voluntary</h3>
+            <p>
+              Explain the purpose, protect privacy, avoid pressure, and make
+              sure children know they can decline to answer or stop taking part.
+            </p>
+          </article>
+
+          <article class="principle-card">
+            <span class="number">03</span>
+            <h3>Respectful and honest</h3>
+            <p>
+              Use child-friendly language, listen without judgement, and be
+              clear about which decisions can—and cannot—be changed.
+            </p>
+          </article>
+
+          <article class="principle-card">
+            <span class="number">04</span>
+            <h3>Representative</h3>
+            <p>
+              Avoid relying on a small, familiar group. Consider whose views
+              are missing and invite participation through appropriate channels.
+            </p>
+          </article>
+
+          <article class="principle-card">
+            <span class="number">05</span>
+            <h3>Influential</h3>
+            <p>
+              Give children’s views genuine consideration and document how
+              those views informed a decision or why a proposal was not adopted.
+            </p>
+          </article>
+
+          <article class="principle-card">
+            <span class="number">06</span>
+            <h3>Accountable</h3>
+            <p>
+              Share outcomes with children, invite their reflections, and
+              improve the process based on what they say worked or did not work.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-inner barriers-layout">
+        <div>
+          <p class="eyebrow">03 · Understanding barriers</p>
+          <h2>Representation takes more than an invitation.</h2>
+          <p>
+            Barriers differ between settings and communities. Ask children and
+            local partners what is relevant rather than assuming that one
+            approach will work for everyone.
+          </p>
+        </div>
+
+        <ul class="barrier-list">
+          <li>
+            <span class="barrier-icon" aria-hidden="true">A</span>
+            <span><strong>Adult-led decision-making</strong>
+              Children may be treated as recipients of services rather than
+              contributors with useful knowledge.</span>
+          </li>
+          <li>
+            <span class="barrier-icon" aria-hidden="true">B</span>
+            <span><strong>Practical access</strong>
+              Meeting times, transport, cost, inaccessible venues, or limited
+              internet access can prevent participation.</span>
+          </li>
+          <li>
+            <span class="barrier-icon" aria-hidden="true">C</span>
+            <span><strong>Unequal opportunities to speak</strong>
+              Some children may be overlooked because of age, disability,
+              language, gender, poverty, or social exclusion.</span>
+          </li>
+          <li>
+            <span class="barrier-icon" aria-hidden="true">D</span>
+            <span><strong>Fear or lack of trust</strong>
+              Children may not feel safe disagreeing with adults or may worry
+              that their views will not remain private.</span>
+          </li>
+          <li>
+            <span class="barrier-icon" aria-hidden="true">E</span>
+            <span><strong>No feedback after consultation</strong>
+              When children hear nothing afterward, participation can feel
+              tokenistic and trust can be weakened.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="roadmap" id="plan">
+      <div class="section-inner">
+        <div class="section-intro">
+          <p class="eyebrow">04 · A practical action plan</p>
+          <h2>Build participation into the way decisions are made.</h2>
+          <p>
+            Begin with one decision-making setting—such as a school, youth
+            programme, community group, or service—and adapt the steps with
+            children and local safeguarding partners.
+          </p>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <h3>Listen and map</h3>
+            <p>
+              Identify decisions that affect children. Ask who currently
+              contributes, who is missing, and what would make participation
+              safe and accessible.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3>Co-design the process</h3>
+            <p>
+              Work with children to choose topics, formats, ground rules, and
+              support needs. Offer small-group, written, creative, and private
+              ways to share views.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3>Share decisions</h3>
+            <p>
+              Explain which choices are open for discussion. Record the views
+              shared and show how they were considered in the final decision.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3>Report back and improve</h3>
+            <p>
+              Tell children what happened, what changed, and why. Ask whether
+              the process felt fair and use their feedback to improve it.
+            </p>
+          </article>
+        </div>
+
+        <p class="timeline-note">
+          Start with a manageable activity, review it with participants, and
+          expand only when appropriate safeguarding and follow-up are in place.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-inner measurement">
+        <div class="measurement-copy">
+          <p class="eyebrow">05 · Learning and evaluation</p>
+          <h2>Measure the quality of participation, not just attendance.</h2>
+          <p>
+            A sign-in sheet can show who was present, but not whether children
+            felt safe, were listened to, or influenced an outcome. Use a mix
+            of observations and child-friendly feedback, and avoid collecting
+            personal information that is not needed.
+          </p>
+        </div>
+
+        <ul class="measure-list">
+          <li>
+            <strong>Access</strong>
+            <span>Could children with different needs and backgrounds take part?</span>
+          </li>
+          <li>
+            <strong>Confidence and safety</strong>
+            <span>Did participants understand their choices and feel able to speak freely?</span>
+          </li>
+          <li>
+            <strong>Influence</strong>
+            <span>Can decision-makers describe how children’s views were considered?</span>
+          </li>
+          <li>
+            <strong>Feedback</strong>
+            <span>Did children receive an understandable response about the outcome?</span>
+          </li>
+          <li>
+            <strong>Improvement</strong>
+            <span>What would children change about the next participation activity?</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="safety">
+      <div class="section-inner safety-panel">
+        <div>
+          <p class="eyebrow">A non-negotiable foundation</p>
+          <h2>Participation must protect children’s dignity and safety.</h2>
+        </div>
+        <div>
+          <p>
+            Every activity should follow relevant local child-protection
+            procedures and the safeguarding policies of the organisations
+            involved. Participation is not a reason to ask children to disclose
+            personal or distressing experiences.
+          </p>
+          <ul class="safety-list">
+            <li>Explain the purpose and how information will be used.</li>
+            <li>Seek appropriate consent and respect a child’s choice not to participate.</li>
+            <li>Protect confidentiality and explain its limits before an activity.</li>
+            <li>Use trained, trusted adults and clear reporting procedures.</li>
+            <li>Do not promise secrecy when a child may be at risk of harm.</li>
+            <li>Provide a safe way to raise concerns or ask for support.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="resources" id="resources">
+      <div class="section-inner">
+        <div class="section-intro">
+          <p class="eyebrow">06 · Further reading</p>
+          <h2>Ground local action in rights and evidence.</h2>
+          <p>
+            These resources provide starting points for understanding children’s
+            rights and the Ugandan context. Consult local organisations and
+            safeguarding professionals when planning activities.
+          </p>
+        </div>
+
+        <div class="resource-grid">
+          <a class="resource-card"
+             href="https://www.ohchr.org/en/instruments-mechanisms/instruments/convention-rights-child"
+             target="_blank" rel="noopener noreferrer">
+            <span>International framework</span>
+            <strong>Convention on the Rights of the Child</strong>
+            <small>See, in particular, Article 12 on children’s right to be heard.</small>
+          </a>
+
+          <a class="resource-card"
+             href="https://www.unicef.org/uganda/"
+             target="_blank" rel="noopener noreferrer">
+            <span>Country context</span>
+            <strong>UNICEF Uganda</strong>
+            <small>Explore country information, programmes, and publications.</small>
+          </a>
+
+          <a class="resource-card"
+             href="https://au.int/en/treaties/african-charter-rights-and-welfare-child"
+             target="_blank" rel="noopener noreferrer">
+            <span>Regional framework</span>
+            <strong>African Charter on the Rights and Welfare of the Child</strong>
+            <small>Read the African Union’s regional children’s rights charter.</small>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="closing-inner">
+        <h2>Start with one decision. Make space for the children it affects.</h2>
+        <a class="button" href="#plan">Use the action plan ↑</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>Children Have a Voice · An educational participation initiative for Uganda</p>
+      <p>This guide is not a substitute for local legal or child-protection advice.</p>
+    </div>
+  </footer>
+</body>
+</html>

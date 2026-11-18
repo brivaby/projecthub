@@ -1,0 +1,41 @@
+name: Vic Academy ProjectHub validation
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      mailpit:
+        image: axllent/mailpit:v1.27
+        ports: ['1025:1025', '8025:8025']
+    env:
+      MAILPIT_URL: http://127.0.0.1:8025
+      APP_URL: http://127.0.0.1:3000
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: 1025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - name: Generate isolated test credentials and start PostgreSQL
+        shell: bash
+        run: |
+          ci_database_password="$(openssl rand -hex 24)"
+          echo "::add-mask::$ci_database_password"
+          echo "DATABASE_URL=postgresql://projecthub:$ci_database_password@127.0.0.1:5432/projecthub_test" >> "$GITHUB_ENV"
+          for setting in AUTH_SECRET ANALYTICS_SECRET CRON_SECRET DEV_SEED_PASSWORD; do
+            ci_secret="$(openssl rand -hex 32)"
+            echo "::add-mask::$ci_secret"
+            echo "$setting=$ci_secret" >> "$GITHUB_ENV"
+          done
+          POSTGRES_PASSWORD="$ci_database_password" docker run -d --name projecthub-postgres -p 127.0.0.1:5432:5432 -e POSTGRES_PASSWORD -e POSTGRES_USER=projecthub -e POSTGRES_DB=projecthub_test postgres:16
+          for attempt in {1..30}; do
+            if docker exec projecthub-postgres pg_isready -U projecthub -d projecthub_test; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - run: npm install
+      - run: npm run db:validate && npm run db:deploy && npm run db:seed
+      - run: npm run typecheck && npm run lint && npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run test:e2e

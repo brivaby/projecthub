@@ -1,0 +1,1 @@
+const students=[{name:"Elizabeth Nelima",house:"Redwood",points:445,merits:44500},{name:"Joshua Kimera",house:"Oak",points:390,merits:39000},{name:"Sarah Nakanwagi",house:"Cedar",points:360,merits:36000},{name:"David Kato",house:"Cypress",points:325,merits:32500},{name:"Grace Achieng",house:"Pistacia",points:300,merits:30000}];

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Underrepresentation of Children in Uganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: url('./images/pexels-bymalens-2158533.jpg') center / cover no-repeat;
+      overflow: hidden;
+    }
+
+    h1 {
+      position: fixed;
+      z-index: 1;
+      top: 20px;
+      left: 50%;
+      width: 90%;
+      margin: 0;
+      color: white;
+      -webkit-text-stroke: 1.5px #3b2416;
+      font: clamp(2rem, 6vw, 5rem) 'Anton', sans-serif;
+      text-align: center;
+      transform: translateX(-50%);
+      animation: dropIn 1s ease-out both;
+    }
+
+    h1::before,
+    h1::after {
+      position: absolute;
+      color: #fff;
+      -webkit-text-stroke: 0;
+      text-shadow: 0 0 8px #fff, 0 0 18px #fff, 0 0 36px #b9eaff;
+      content: '✦ ✧ ✦';
+      animation: glitter 0.6s ease-in-out infinite alternate;
+    }
+
+    h1::before {
+      top: -0.5em;
+      left: 5%;
+    }
+
+    h1::after {
+      right: 5%;
+      bottom: -0.5em;
+      content: '✧ ✦ ✧';
+      animation-delay: 0.3s;
+    }
+
+    .sparkles {
+      position: fixed;
+      z-index: 2;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .sparkles span {
+      position: absolute;
+      color: white;
+      font-size: clamp(18px, 3vw, 36px);
+      text-shadow: 0 0 6px #fff, 0 0 16px #fff, 0 0 32px #9eeaff;
+      animation: sparkle 1s ease-in-out infinite alternate;
+    }
+
+    .sparkles span:nth-child(3n) { font-size: clamp(28px, 5vw, 54px); }
+    .sparkles span:nth-child(3n + 1) { animation-duration: 0.65s; }
+    .sparkles span:nth-child(3n + 2) { animation-duration: 1.3s; }
+
+    @keyframes dropIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -120%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    @keyframes glitter {
+      from { opacity: 0.7; transform: scale(0.8) rotate(-8deg); }
+      to { opacity: 1; transform: scale(1.5) rotate(12deg); }
+    }
+
+    @keyframes sparkle {
+      from {
+        opacity: 0.2;
+        transform: scale(0.5) rotate(0deg);
+        filter: brightness(1);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1.5) rotate(45deg);
+        filter: brightness(2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sparkles" aria-hidden="true">
+    <span style="left:5%;top:12%">✦</span>
+    <span style="left:18%;top:30%">✧</span>
+    <span style="left:32%;top:8%">✦</span>
+    <span style="left:48%;top:18%">✧</span>
+    <span style="left:65%;top:10%">✦</span>
+    <span style="left:82%;top:28%">✧</span>
+    <span style="left:94%;top:12%">✦</span>
+    <span style="left:9%;top:52%">✧</span>
+    <span style="left:24%;top:72%">✦</span>
+    <span style="left:39%;top:56%">✧</span>
+    <span style="left:57%;top:78%">✦</span>
+    <span style="left:73%;top:58%">✧</span>
+    <span style="left:89%;top:74%">✦</span>
+    <span style="left:14%;top:90%">✦</span>
+    <span style="left:44%;top:92%">✧</span>
+    <span style="left:68%;top:91%">✦</span>
+    <span style="left:97%;top:48%">✧</span>
+    <span style="left:3%;top:38%">✦</span>
+    <span style="left:54%;top:40%">✧</span>
+    <span style="left:77%;top:39%">✦</span>
+  </div>
+
+  <h1>The Underrepresentation of Children in Uganda</h1>
+</body>
+</html>

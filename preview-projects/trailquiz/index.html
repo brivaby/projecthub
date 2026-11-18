@@ -1,0 +1,690 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrailQuiz | Learning Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Fraunces:wght@600;700&display=swap" rel="stylesheet" />
+    <style>
+    :root{--ink:#172620;--muted:#75817b;--green:#246b50;--green-bright:#a7e66c;--green-pale:#eaf5e5;--paper:#f6f7f1;--white:#fff;--line:#e6e9e1;--coral:#ed7965;--yellow:#f4c94e;--shadow:0 12px 35px rgba(27,54,39,.08)}
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font: 15px/1.5 'DM Sans', sans-serif;
+    }
+    button,
+    input,
+    textarea {
+        font: inherit;
+    }
+    button {
+        cursor: pointer;
+    }
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+        outline: 3px solid #78b58c;
+        outline-offset: 2px;
+    }
+    .shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 244px minmax(0, 1fr);
+    }
+    aside{background:#fff;border-right:1px solid var(--line);padding:26px 18px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;padding:2px 10px 34px;font-weight:800;font-size:19px;letter-spacing:0}.brand-mark{width:32px;height:32px;border-radius:11px;background:var(--green);display:grid;place-items:center;color:#fff}.brand-mark svg{width:19px}.nav-label{padding:0 12px 10px;color:#9aa39d;font-weight:700;font-size:10px;letter-spacing:1.4px;text-transform:uppercase}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#66736c;display:flex;align-items:center;gap:12px;padding:11px 12px;text-align:left;border-radius:10px;font-weight:600}.nav button:hover,.nav button.active{background:#edf5e9;color:#245c43}.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}.aside-bottom{margin-top:auto}.tip{background:#f6f8ef;border:1px solid #edf0e3;padding:16px;border-radius:12px}.tip b{display:block;font-size:13px;margin:5px 0}.tip p{font-size:12px;color:var(--muted);margin:0}.tip-icon{font-size:20px}.profile{border-top:1px solid var(--line);margin:18px 4px 0;padding:17px 5px 0;display:flex;gap:10px;align-items:center}.avatar{display:grid;place-items:center;background:#f6d796;border-radius:50%;width:35px;height:35px;font-weight:800;color:#755326}.profile b{font-size:13px;display:block}.profile small{color:var(--muted);font-size:11px}
+    main{min-width:0;padding:0 42px 60px}.topbar{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.crumb{font-size:13px;color:#85918a}.crumb strong{color:var(--ink);font-weight:700}.top-actions{display:flex;gap:10px;align-items:center}.icon-button{width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:11px;display:grid;place-items:center;color:#617168}.icon-button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}.content{max-width:1090px;margin:0 auto}.welcome{display:flex;justify-content:space-between;align-items:flex-end;padding:36px 0 25px;gap:20px}.eyebrow{font-weight:700;font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--green)}h1,h2,h3,p{margin-top:0}h1{font:700 36px/1.13 Fraunces,serif;letter-spacing:0;margin:7px 0}.welcome p{color:var(--muted);margin:8px 0 0}.primary,.secondary,.text-button{border:0;display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:700;border-radius:10px;padding:12px 16px}.primary{background:var(--green);color:white;box-shadow:0 5px 12px #246b5020}.primary:hover{background:#1b5940;transform:translateY(-1px)}.primary svg,.secondary svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2}.secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}.secondary:hover{border-color:#aab8ad}.text-button{background:transparent;color:var(--green);padding:8px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 34px}.stat{background:white;border:1px solid var(--line);border-radius:13px;padding:17px 19px;display:flex;align-items:center;gap:14px}.stat-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px}.stat-icon.green{background:#e8f4e3}.stat-icon.yellow{background:#fcf2d2}.stat-icon.coral{background:#fce8e3}.stat strong{font-size:21px;line-height:1.1;display:block}.stat span:last-child{font-size:12px;color:var(--muted)}.columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.85fr);gap:20px}.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.section-heading h2{font-size:17px;margin:0}.section-heading a{color:var(--green);text-decoration:none;font-size:12px;font-weight:700}.quiz-list{display:grid;gap:10px}.quiz-row{display:flex;align-items:center;gap:14px;background:white;border:1px solid var(--line);border-radius:12px;padding:13px 15px;min-width:0}.quiz-cover{width:45px;height:45px;border-radius:11px;display:grid;place-items:center;font-size:22px;flex-shrink:0}.quiz-info{min-width:0;flex:1}.quiz-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}.quiz-info small{color:var(--muted);font-size:12px}.quiz-code{font-size:11px;color:#8b958f;margin-right:5px}.row-actions{display:flex;gap:5px}.row-actions button{width:33px;height:33px;border:0;border-radius:9px;background:transparent;color:#76827b}.row-actions button:hover{background:#f0f3ed;color:var(--green)}.row-actions svg{width:16px;stroke:currentColor;fill:none;stroke-width:1.8}.play-card{border-radius:14px;background:#1f6048;color:white;padding:22px;position:relative;overflow:hidden;min-height:224px}.play-card:after{content:'';position:absolute;right:-15px;bottom:-48px;width:155px;height:155px;border:1px solid #ffffff25;border-radius:50%;box-shadow:0 0 0 18px #ffffff0c,0 0 0 38px #ffffff09}.play-card .eyebrow{color:#bbeca3}.play-card h2{font:700 25px/1.15 Fraunces,serif;max-width:240px;margin:12px 0 8px}.play-card p{color:#d0e4d7;font-size:13px;max-width:250px;margin-bottom:20px}.play-card .secondary{position:relative;z-index:1;padding:10px 13px}.join-box{background:white;border:1px solid var(--line);border-radius:13px;padding:18px;margin-top:14px}.join-box label{font-size:12px;font-weight:700;display:block;margin-bottom:9px}.join-form{display:flex;gap:8px}.join-form input{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px 12px;text-transform:uppercase;letter-spacing:1px}.join-form button{padding:9px 13px}.empty{padding:24px;text-align:center;background:#fff;border:1px dashed #d7ded6;border-radius:12px;color:var(--muted)}.empty b{display:block;color:var(--ink);margin-bottom:4px}.page-enter{animation:appear .35s ease both}@keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    .overlay{position:fixed;inset:0;background:#11251dcc;display:grid;place-items:center;padding:20px;z-index:10;overflow:auto}.dialog{width:min(720px,100%);background:var(--paper);border-radius:16px;box-shadow:0 24px 80px #09231955;max-height:calc(100vh - 40px);overflow:auto}.dialog-head{background:#fff;border-bottom:1px solid var(--line);padding:19px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1}.dialog-head h2{margin:0;font:700 22px Fraunces,serif}.close{background:transparent;border:0;color:#6b7770;font-size:24px;line-height:1}.dialog-body{padding:22px 24px}.field{display:grid;gap:6px;margin-bottom:16px}.field label{font-size:12px;font-weight:700}.field input,.field textarea{border:1px solid #dfe5dc;border-radius:9px;background:#fff;padding:11px 12px;color:var(--ink)}.field textarea{resize:vertical;min-height:70px}.field input::placeholder,.field textarea::placeholder{color:#a7afa9}.question-editor{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:12px}.question-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.question-top strong{font-size:13px}.remove-question{border:0;background:transparent;color:#b96b5e;font-size:12px}.options-editor{display:grid;grid-template-columns:1fr 1fr;gap:8px}.option-edit{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:8px 10px}.option-edit input[type=text]{min-width:0;width:100%;border:0;outline:0;padding:2px;background:transparent}.option-edit:focus-within{border-color:#78b58c}.option-edit input[type=radio]{accent-color:var(--green)}.editor-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:17px;margin-top:16px}.editor-footer small{color:var(--muted);font-size:12px}.editor-actions{display:flex;gap:8px}.notice{font-size:12px;color:#bb5548;min-height:18px;margin-top:8px}
+    .play-view{max-width:760px;margin:36px auto}.play-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.play-top .secondary{padding:9px 12px}.progress-wrap{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;font-weight:700}.progress{height:7px;background:#e4e9e2;border-radius:99px;overflow:hidden;flex:1}.progress span{height:100%;display:block;background:var(--green-bright);border-radius:99px;transition:width .3s}.question-card{background:white;border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:var(--shadow)}.category{color:var(--green);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:800}.question-card h1{font-size:30px;line-height:1.2;margin:11px 0 23px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:11px}.answer{border:1px solid var(--line);background:#fff;border-radius:11px;text-align:left;padding:14px;min-height:58px;display:flex;align-items:center;gap:12px;font-weight:600;color:var(--ink);transition:transform .15s,border .15s,background .15s}.answer:hover:not(:disabled){border-color:#92b59b;transform:translateY(-2px)}.answer-key{width:28px;height:28px;border-radius:8px;background:#f0f2ec;display:grid;place-items:center;font-size:12px;font-weight:800;color:#758078;flex-shrink:0}.answer.correct{background:#e7f6e8;border-color:#76c681;color:#1c6130}.answer.correct .answer-key{background:#c9ebce;color:#1c6130}.answer.wrong{background:#fff0ed;border-color:#ed8e7e;color:#a23a2b}.answer.wrong .answer-key{background:#fbd7d1;color:#a23a2b}.feedback{margin-top:16px;border-radius:10px;padding:13px 15px;font-weight:700;display:none}.feedback.show{display:flex;justify-content:space-between;align-items:center;gap:12px;animation:appear .2s ease}.feedback.good{background:#e8f5e8;color:#236536}.feedback.bad{background:#fff0ed;color:#9f392c}.feedback button{border:0;background:var(--green);color:white;padding:9px 13px;border-radius:8px;font-size:12px;font-weight:700;white-space:nowrap}.result{text-align:center;background:white;border:1px solid var(--line);border-radius:16px;padding:38px 28px;box-shadow:var(--shadow)}.result-emoji{font-size:46px}.result h1{margin-top:10px}.score{font:700 54px Fraunces,serif;color:var(--green);margin:10px 0}.result p{color:var(--muted)}.result-actions{display:flex;gap:9px;justify-content:center;margin-top:22px}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#173d2d;color:white;padding:11px 17px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:850px){.shell{grid-template-columns:72px minmax(0,1fr)}aside{padding:22px 10px;align-items:center}.brand{padding:2px 0 34px}.brand-name,.nav-label,.nav button span,.tip,.profile>div:last-child{display:none}.nav{width:100%}.nav button{justify-content:center;padding:12px}.aside-bottom{width:100%}.profile{justify-content:center;margin-left:0;margin-right:0;padding-left:0;padding-right:0}.profile .avatar{width:34px}.columns{grid-template-columns:1fr}.side-column{display:grid;grid-template-columns:1fr 1fr;gap:12px}.join-box{margin:0}.play-card{min-height:200px}main{padding:0 25px 45px}}
+    @media(max-width:560px){.shell{display:block}aside{height:62px;position:sticky;z-index:5;top:0;border-right:0;border-bottom:1px solid var(--line);padding:0 12px;display:flex;flex-direction:row;justify-content:space-between}.brand{padding:0}.brand-name{display:inline}.nav{display:flex;width:auto;gap:2px}.nav button{padding:9px}.nav button span{display:none}.nav-label,.aside-bottom{display:none}main{padding:0 16px 35px}.topbar{height:59px}.top-actions .icon-button{width:34px;height:34px}.welcome{align-items:flex-start;flex-direction:column;padding:26px 0 20px;gap:14px}.welcome h1{font-size:31px}.welcome .primary{width:100%}.stats{gap:7px;margin-bottom:25px}.stat{padding:11px 9px;gap:8px;align-items:flex-start;flex-direction:column}.stat-icon{width:32px;height:32px;font-size:16px;border-radius:9px}.stat strong{font-size:18px}.stat span:last-child{font-size:10px}.side-column{grid-template-columns:1fr}.play-card{min-height:190px}.row-actions .share-btn{display:none}.quiz-row{gap:9px;padding:11px}.quiz-cover{width:39px;height:39px}.quiz-code{display:none}.dialog-head{padding:16px}.dialog-body{padding:17px}.options-editor{grid-template-columns:1fr}.editor-footer{align-items:flex-start;flex-direction:column}.editor-actions{width:100%}.editor-actions button{flex:1}.play-view{margin:23px auto}.question-card{padding:19px}.question-card h1{font-size:25px}.answers{grid-template-columns:1fr;gap:8px}.answer{min-height:52px;padding:10px}.feedback.show{align-items:flex-start;flex-direction:column}.feedback button{align-self:flex-end}.play-top{margin-bottom:18px}.result{padding:30px 18px}.result-actions{flex-direction:column}.result-actions button{width:100%}}
+    #editorOverlay[hidden],#progressView[hidden],[hidden]{display:none!important}
+    .search-input{width:min(230px,35vw);border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;color:var(--ink)}
+    .quiz-row .row-actions{flex-shrink:0}
+    .quiz-row .row-actions button[data-action="edit-quiz"],.quiz-row .row-actions button[data-action="delete-quiz"]{font-size:18px}
+    .quiz-row .row-actions button[data-action="delete-quiz"]:hover{background:#fff0ed;color:#a23a2b}
+    .quiz-cover{background:#e8f4e3}
+    .progress-view{padding:36px 42px 60px}
+    .progress-view .content{display:grid;gap:14px}
+    .progress-view .stat{min-height:84px}
+    .question-editor .field{margin-bottom:12px}
+    .question-editor .field:last-child{margin:12px 0 0}
+    .editor-actions{align-items:center}
+    .nav button.active{background:#edf5e9;color:#245c43}
+    @media(max-width:850px){.progress-view{padding:30px 25px 45px}}
+    @media(max-width:560px){.progress-view{padding:24px 16px 35px}.search-input{position:absolute;right:60px;width:calc(100% - 150px)}.quiz-row .row-actions{gap:0}.quiz-row .row-actions button{width:29px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+    </style>
+  </head>
+  <body>
+    <div class="shell page-enter" id="dashboardScreen">
+      <aside>
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 17l10-10M7 7h10v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="brand-name">TrailQuiz</div>
+        </div>
+
+        <div class="nav-label">Navigate</div>
+        <nav class="nav" aria-label="Main navigation">
+          <button class="active" type="button" data-page="overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-8.5z"/></svg><span>Overview</span></button>
+          <button type="button" data-page="quizzes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1 2-2V6a2 2 0 0 1 2-2zm0 0v4h8V4M9 13h6M9 17h6"/></svg><span>Quizzes</span></button>
+          <button type="button" data-page="progress"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18V9m7 9V5m7 13v-7"/><path d="M3 18h18"/></svg><span>Progress</span></button>
+          <button type="button" data-page="library"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9zm2.5 0h11M8 9h8M8 13h8"/></svg><span>Library</span></button>
+        </nav>
+
+        <div class="aside-bottom">
+          <div class="tip">
+            <div class="tip-icon" aria-hidden="true">✦</div>
+            <b>Daily streak</b>
+            <p>Play a quick challenge to practice a little every day.</p>
+          </div>
+        </div>
+
+        <div class="profile">
+          <div class="avatar">AR</div>
+          <div>
+            <b>Ariho</b>
+            <small>Student</small>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div class="crumb">Dashboard <strong> / Overview</strong></div>
+          <div class="top-actions">
+            <button class="icon-button" type="button" aria-label="Search" data-action="toggle-search">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/></svg>
+            </button>
+            <input id="searchInput" class="search-input" type="search" placeholder="Search quizzes..." aria-label="Search quizzes" hidden />
+            <button class="icon-button" type="button" aria-label="Notifications" data-action="notifications">
+              <svg viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="content">
+          <section class="welcome">
+            <div>
+              <div class="eyebrow">Learning dashboard</div>
+              <h1>Build momentum.</h1>
+              <p>Keep your mind sharp with one focused challenge at a time.</p>
+            </div>
+            <div class="top-actions">
+              <button class="secondary" type="button" data-action="new-quiz">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                New quiz
+              </button>
+              <button class="primary" type="button" data-action="start-quiz">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"/></svg>
+                Start now
+              </button>
+            </div>
+          </section>
+
+          <section class="stats" aria-label="Stats">
+            <div class="stat">
+              <div class="stat-icon green">✓</div>
+              <div>
+                <strong id="completedCount">0</strong>
+                <span>completed</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-icon yellow">◔</div>
+              <div>
+                <strong id="accuracyCount">0%</strong>
+                <span>accuracy</span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-icon coral">⚡</div>
+              <div>
+                <strong id="streakCount">0d</strong>
+                <span>days active</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="columns">
+            <div>
+              <div class="section-heading">
+                <h2 id="quizListTitle">Your quizzes</h2>
+                <a href="#quizList" data-action="view-all">View all</a>
+              </div>
+
+              <div class="quiz-list" id="quizList"></div>
+            </div>
+
+            <div class="side-column">
+              <div class="play-card">
+                <div class="eyebrow">Quick play</div>
+                <h2>Finish today’s challenge</h2>
+                <p>Jump into a fast 5-question round and keep your streak alive.</p>
+                <button class="secondary" type="button" data-action="start-quiz">Play now</button>
+              </div>
+
+              <div class="join-box">
+                <label for="join-code">Join room</label>
+                <form class="join-form" id="joinForm">
+                  <input id="join-code" type="text" placeholder="Enter quiz room code" aria-label="Join code" />
+                  <button class="primary" type="submit">Join</button>
+                </form>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <section class="progress-view" id="progressView" hidden>
+      <div class="content">
+        <div class="section-heading"><h2>Learning progress</h2></div>
+        <div class="stat"><div><strong id="progressSummary">No quizzes completed yet</strong><span>Your quiz attempts and accuracy are saved in this browser.</span></div></div>
+        <div class="section-heading"><h2>Recent activity</h2></div>
+        <div class="quiz-list" id="activityList"></div>
+      </div>
+    </section>
+
+    <div class="play-view" id="quizScreen" style="display:none;">
+      <div class="play-top">
+        <button class="secondary" type="button" data-action="back-dashboard">Back</button>
+        <div class="progress-wrap">
+          <span id="progressText">Question 1 / 5</span>
+          <div class="progress" aria-label="Quiz progress"><span id="progressFill" style="width:20%"></span></div>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="category" id="questionCategory">General Knowledge</div>
+        <h1 id="questionText">Loading question…</h1>
+        <div class="answers" id="answersContainer"></div>
+        <div class="feedback" id="feedbackBox" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="play-view" id="resultScreen" style="display:none;">
+      <div class="result">
+        <div class="result-emoji" id="resultEmoji">🏆</div>
+        <h1 id="resultTitle">You finished!</h1>
+        <div class="score" id="finalScore">0/5</div>
+        <p id="resultMessage">Nice work.</p>
+        <div class="result-actions">
+          <button class="primary" type="button" data-action="restart-quiz">Play again</button>
+          <button class="secondary" type="button" data-action="back-dashboard">Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">Room joined</div>
+
+    <div class="overlay" id="editorOverlay" hidden>
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+        <header class="dialog-head">
+          <h2 id="editorTitle">Create a quiz</h2>
+          <button class="close" type="button" aria-label="Close" data-action="close-editor">&times;</button>
+        </header>
+        <form id="quizForm">
+          <div class="dialog-body">
+            <div class="field">
+              <label for="quizTitle">Quiz title</label>
+              <input id="quizTitle" name="title" type="text" maxlength="80" placeholder="e.g. Biology revision" required />
+            </div>
+            <div class="field">
+              <label for="quizDescription">Description (optional)</label>
+              <input id="quizDescription" name="description" type="text" maxlength="160" placeholder="What is this quiz about?" />
+            </div>
+            <div id="questionEditors"></div>
+            <button class="secondary" type="button" data-action="add-question">+ Add question</button>
+            <p class="notice" id="editorNotice" role="alert"></p>
+            <div class="editor-footer">
+              <small>Choose the radio button beside the correct answer.</small>
+              <div class="editor-actions">
+                <button class="secondary" type="button" data-action="close-editor">Cancel</button>
+                <button class="primary" type="submit">Save quiz</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script>
+      const starterQuestions = [
+        { category: 'Science', question: 'Which planet is known as the Red Planet?', options: ['Venus', 'Mars', 'Jupiter', 'Mercury'], answer: 1, explanation: 'Mars appears red because of iron oxide on its surface.' },
+        { category: 'Technology', question: 'What does HTML stand for?', options: ['HyperText Markup Language', 'HighText Machine Language', 'Hyperlink Transfer Markup Language', 'Home Tool Markup Language'], answer: 0, explanation: 'HTML is the standard markup language used to structure web pages.' },
+        { category: 'Math', question: 'What is 12 × 8?', options: ['84', '96', '108', '72'], answer: 1, explanation: '12 × 8 = 96.' },
+        { category: 'Geography', question: 'Which is the largest ocean on Earth?', options: ['Atlantic Ocean', 'Indian Ocean', 'Pacific Ocean', 'Arctic Ocean'], answer: 2, explanation: 'The Pacific Ocean is the largest and deepest ocean.' },
+        { category: 'Literature', question: 'Who wrote “Pride and Prejudice”?', options: ['Jane Austen', 'Charlotte Brontë', 'Emily Dickinson', 'Mary Shelley'], answer: 0, explanation: 'Jane Austen published Pride and Prejudice in 1813.' }
+      ];
+      const starterQuizzes = [
+        { id: 'starter-general', title: 'General knowledge', description: 'A quick mix of science, maths, technology and more.', code: 'GEN-101', emoji: '🌿', questions: starterQuestions },
+        { id: 'starter-logic', title: 'Logic drills', description: 'Warm up with a short set of brain teasers.', code: 'LOG-204', emoji: '🧠', questions: [
+          { category: 'Logic', question: 'What comes next: 2, 4, 8, 16, …?', options: ['18', '24', '32', '64'], answer: 2, explanation: 'Each number doubles, so the next number is 32.' },
+          { category: 'Logic', question: 'If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?', options: ['Yes', 'No', 'Only some', 'Cannot be determined'], answer: 0, explanation: 'The relationship carries through both groups.' },
+          { category: 'Math', question: 'A clock shows 3:00. What is the angle between its hands?', options: ['45°', '90°', '120°', '180°'], answer: 1, explanation: 'At 3:00 the hands form a right angle.' }
+        ] },
+        { id: 'starter-nature', title: 'Nature & ecosystems', description: 'Explore plants, animals and the environment.', code: 'NAT-308', emoji: '🌱', questions: [
+          { category: 'Nature', question: 'What gas do plants absorb from the atmosphere?', options: ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Helium'], answer: 1, explanation: 'Plants use carbon dioxide during photosynthesis.' },
+          { category: 'Nature', question: 'What is the main source of energy for most ecosystems?', options: ['The Sun', 'The Moon', 'Wind', 'Volcanoes'], answer: 0, explanation: 'Sunlight powers photosynthesis and supports most food chains.' },
+          { category: 'Nature', question: 'Which of these is a mammal?', options: ['Trout', 'Frog', 'Dolphin', 'Turtle'], answer: 2, explanation: 'Dolphins are warm-blooded mammals that breathe air.' }
+        ] }
+      ];
+      const QUIZZES_KEY = 'trailquiz.quizzes.v1';
+      const ATTEMPTS_KEY = 'trailquiz.attempts.v1';
+      const state = { currentIndex: 0, score: 0, answered: false, currentQuiz: null, editId: null, resultSaved: false, page: 'overview' };
+      const dashboardScreen = document.getElementById('dashboardScreen');
+      const quizScreen = document.getElementById('quizScreen');
+      const resultScreen = document.getElementById('resultScreen');
+      const progressView = document.getElementById('progressView');
+      const questionCategory = document.getElementById('questionCategory');
+      const questionText = document.getElementById('questionText');
+      const answersContainer = document.getElementById('answersContainer');
+      const feedbackBox = document.getElementById('feedbackBox');
+      const progressText = document.getElementById('progressText');
+      const progressFill = document.getElementById('progressFill');
+      const finalScore = document.getElementById('finalScore');
+      const resultMessage = document.getElementById('resultMessage');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultEmoji = document.getElementById('resultEmoji');
+      const toast = document.getElementById('toast');
+      const quizList = document.getElementById('quizList');
+      const quizForm = document.getElementById('quizForm');
+      const questionEditors = document.getElementById('questionEditors');
+      const editorOverlay = document.getElementById('editorOverlay');
+      const searchInput = document.getElementById('searchInput');
+      let quizzes = loadStoredArray(QUIZZES_KEY, starterQuizzes);
+      let attempts = loadStoredArray(ATTEMPTS_KEY, []);
+
+      function loadStoredArray(key, fallback) {
+        try {
+          const value = localStorage.getItem(key);
+          if (value === null) return fallback.map(item => ({ ...item }));
+          const parsed = JSON.parse(value);
+          if (!Array.isArray(parsed)) throw new Error('Stored data is not a list.');
+          return parsed;
+        } catch (error) {
+          showToast('Saved data could not be loaded. Using the starter quizzes.');
+          return fallback.map(item => ({ ...item }));
+        }
+      }
+
+      function persist(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (error) {
+          showToast('Could not save in this browser. Check storage settings and try again.');
+          return false;
+        }
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+      }
+
+      function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[character]);
+      }
+
+      function renderQuizList(filter = '') {
+        const query = filter.trim().toLowerCase();
+        const shown = quizzes.filter(quiz => `${quiz.title} ${quiz.description} ${quiz.code}`.toLowerCase().includes(query));
+        if (!shown.length) {
+          quizList.innerHTML = `<div class="empty"><b>${query ? 'No matching quizzes' : 'No quizzes yet'}</b>${query ? 'Try another search.' : 'Create your first quiz to get started.'}</div>`;
+          return;
+        }
+        quizList.innerHTML = shown.map(quiz => `
+          <article class="quiz-row">
+            <div class="quiz-cover">${escapeHTML(quiz.emoji || '📝')}</div>
+            <div class="quiz-info"><strong>${escapeHTML(quiz.title)}</strong><small>${quiz.questions.length} ${quiz.questions.length === 1 ? 'question' : 'questions'} · ${escapeHTML(quiz.description || 'Your custom quiz')}</small></div>
+            <div class="quiz-code">${escapeHTML(quiz.code)}</div>
+            <div class="row-actions">
+              <button type="button" aria-label="Play ${escapeHTML(quiz.title)}" title="Play" data-action="start-quiz" data-id="${escapeHTML(quiz.id)}"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"/></svg></button>
+              <button type="button" aria-label="Share ${escapeHTML(quiz.title)}" title="Copy room code" class="share-btn" data-action="share-quiz" data-id="${escapeHTML(quiz.id)}"><svg viewBox="0 0 24 24"><path d="M15 8a3 3 0 1 0-2.8-4H12a3 3 0 0 0 3 3zm-9 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm12 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-10-4l8-4m-8-4l8 4"/></svg></button>
+              <button type="button" aria-label="Edit ${escapeHTML(quiz.title)}" title="Edit" data-action="edit-quiz" data-id="${escapeHTML(quiz.id)}">✎</button>
+              <button type="button" aria-label="Delete ${escapeHTML(quiz.title)}" title="Delete" data-action="delete-quiz" data-id="${escapeHTML(quiz.id)}">×</button>
+            </div>
+          </article>`).join('');
+      }
+
+      function updateDashboardStats() {
+        const completed = attempts.length;
+        const correct = attempts.reduce((sum, attempt) => sum + attempt.score, 0);
+        const total = attempts.reduce((sum, attempt) => sum + attempt.total, 0);
+        document.getElementById('completedCount').textContent = completed;
+        document.getElementById('accuracyCount').textContent = total ? `${Math.round(correct / total * 100)}%` : '0%';
+        const activeDays = new Set(attempts.map(attempt => new Date(attempt.date).toLocaleDateString()));
+        const cursor = new Date();
+        cursor.setHours(0, 0, 0, 0);
+        if (!activeDays.has(cursor.toLocaleDateString())) cursor.setDate(cursor.getDate() - 1);
+        let streak = 0;
+        while (activeDays.has(cursor.toLocaleDateString())) {
+          streak += 1;
+          cursor.setDate(cursor.getDate() - 1);
+        }
+        document.getElementById('streakCount').textContent = `${streak}d`;
+        document.getElementById('progressSummary').textContent = completed
+          ? `${completed} quiz${completed === 1 ? '' : 'zes'} completed · ${total ? Math.round(correct / total * 100) : 0}% correct`
+          : 'No quizzes completed yet';
+        const activityList = document.getElementById('activityList');
+        const recent = attempts.slice(-8).reverse();
+        activityList.innerHTML = recent.length
+          ? recent.map(attempt => `<div class="quiz-row"><div class="quiz-cover">✓</div><div class="quiz-info"><strong>${escapeHTML(attempt.title)}</strong><small>${new Date(attempt.date).toLocaleString()}</small></div><div class="quiz-code">${attempt.score}/${attempt.total}</div></div>`).join('')
+          : '<div class="empty"><b>No activity yet</b>Play a quiz and your results will appear here.</div>';
+      }
+
+      function setPage(page) {
+        const previousPage = state.page;
+        state.page = page;
+        document.querySelectorAll('.nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === page));
+        const isProgress = page === 'progress';
+        const isOverview = page === 'overview';
+        document.querySelector('.welcome').hidden = !isOverview;
+        document.querySelector('.stats').hidden = !isOverview && !isProgress;
+        document.querySelector('.columns').hidden = isProgress;
+        progressView.hidden = !isProgress;
+        document.querySelector('.crumb strong').textContent = ` / ${page[0].toUpperCase()}${page.slice(1)}`;
+        document.getElementById('quizListTitle').textContent = page === 'library' ? 'Quiz library' : 'Your quizzes';
+        if ((page === 'quizzes' || page === 'library') && previousPage !== page) document.querySelector('.columns').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        updateDashboardStats();
+      }
+
+      function showDashboard() {
+        dashboardScreen.style.display = 'grid';
+        quizScreen.style.display = 'none';
+        resultScreen.style.display = 'none';
+        setPage(state.page);
+      }
+
+      function startQuiz(id) {
+        const quiz = quizzes.find(item => item.id === id) || quizzes[0];
+        if (!quiz || !quiz.questions.length) {
+          showToast('Create a quiz with at least one question before playing.');
+          openEditor();
+          return;
+        }
+        state.currentQuiz = quiz;
+        state.currentIndex = 0;
+        state.score = 0;
+        state.answered = false;
+        state.resultSaved = false;
+        dashboardScreen.style.display = 'none';
+        quizScreen.style.display = 'block';
+        resultScreen.style.display = 'none';
+        progressView.hidden = true;
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const current = state.currentQuiz.questions[state.currentIndex];
+        state.answered = false;
+        questionCategory.textContent = current.category || state.currentQuiz.title;
+        questionText.textContent = current.question;
+        progressText.textContent = `Question ${state.currentIndex + 1} / ${state.currentQuiz.questions.length}`;
+        progressFill.style.width = `${((state.currentIndex + 1) / state.currentQuiz.questions.length) * 100}%`;
+        answersContainer.innerHTML = '';
+        feedbackBox.className = 'feedback';
+        feedbackBox.textContent = '';
+        current.options.forEach((option, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'answer';
+          const key = document.createElement('span');
+          key.className = 'answer-key';
+          key.textContent = String.fromCharCode(65 + index);
+          const text = document.createElement('span');
+          text.textContent = option;
+          button.append(key, text);
+          button.addEventListener('click', () => submitAnswer(index));
+          answersContainer.appendChild(button);
+        });
+      }
+
+      function submitAnswer(selectedIndex) {
+        if (state.answered) return;
+        state.answered = true;
+        const current = state.currentQuiz.questions[state.currentIndex];
+        answersContainer.querySelectorAll('.answer').forEach((button, index) => {
+          button.disabled = true;
+          if (index === current.answer) button.classList.add('correct');
+          if (index === selectedIndex && selectedIndex !== current.answer) button.classList.add('wrong');
+        });
+        const isCorrect = selectedIndex === current.answer;
+        if (isCorrect) state.score += 1;
+        feedbackBox.className = `feedback show ${isCorrect ? 'good' : 'bad'}`;
+        const message = document.createElement('span');
+        message.textContent = `${isCorrect ? 'Correct!' : 'Not quite.'} ${current.explanation || ''}`;
+        const next = document.createElement('button');
+        next.type = 'button';
+        next.textContent = state.currentIndex === state.currentQuiz.questions.length - 1 ? 'See results' : 'Next';
+        next.addEventListener('click', () => {
+          if (state.currentIndex < state.currentQuiz.questions.length - 1) {
+            state.currentIndex += 1;
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        });
+        feedbackBox.replaceChildren(message, next);
+      }
+
+      function showResults() {
+        finalScore.textContent = `${state.score} / ${state.currentQuiz.questions.length}`;
+        const ratio = state.score / state.currentQuiz.questions.length;
+        resultEmoji.textContent = ratio === 1 ? '🏆' : ratio >= 0.6 ? '🎉' : '💪';
+        resultTitle.textContent = ratio === 1 ? 'Perfect score!' : ratio >= 0.6 ? 'Great job!' : 'Keep going!';
+        resultMessage.textContent = `You got ${state.score} out of ${state.currentQuiz.questions.length} correct in “${state.currentQuiz.title}”.`;
+        quizScreen.style.display = 'none';
+        resultScreen.style.display = 'block';
+        if (!state.resultSaved) {
+          state.resultSaved = true;
+          attempts.push({ title: state.currentQuiz.title, score: state.score, total: state.currentQuiz.questions.length, date: new Date().toISOString() });
+          if (persist(ATTEMPTS_KEY, attempts)) updateDashboardStats();
+        }
+      }
+
+      function createQuestionEditor(question = {}) {
+        const index = questionEditors.children.length;
+        const card = document.createElement('section');
+        card.className = 'question-editor';
+        card.innerHTML = `<div class="question-top"><strong>Question ${index + 1}</strong><button class="remove-question" type="button" data-action="remove-question">Remove</button></div>
+          <div class="field"><label>Question</label><textarea class="question-prompt" maxlength="300" placeholder="Type your question" required></textarea></div>
+          <div class="options-editor"></div>
+          <div class="field"><label>Explanation (optional)</label><input class="question-explanation" type="text" maxlength="240" placeholder="Explain the correct answer" /></div>`;
+        card.querySelector('.question-prompt').value = question.question || '';
+        card.querySelector('.question-explanation').value = question.explanation || '';
+        const options = card.querySelector('.options-editor');
+        for (let index = 0; index < 4; index += 1) {
+          const label = document.createElement('label');
+          label.className = 'option-edit';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = `correct-${Date.now()}-${Math.random()}`;
+          radio.value = String(index);
+          radio.checked = (question.answer || 0) === index;
+          radio.setAttribute('aria-label', `Mark answer ${String.fromCharCode(65 + index)} correct`);
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.maxLength = 140;
+          input.required = true;
+          input.placeholder = `Answer ${String.fromCharCode(65 + index)}`;
+          input.value = question.options?.[index] || '';
+          label.append(radio, input);
+          options.appendChild(label);
+        }
+        questionEditors.appendChild(card);
+        renumberQuestionEditors();
+      }
+
+      function renumberQuestionEditors() {
+        [...questionEditors.children].forEach((card, index) => {
+          card.querySelector('.question-top strong').textContent = `Question ${index + 1}`;
+          const radio = card.querySelector('input[type="radio"]');
+          if (radio) {
+            const name = `correct-question-${index}`;
+            card.querySelectorAll('input[type="radio"]').forEach(item => { item.name = name; });
+          }
+        });
+      }
+
+      function openEditor(quiz = null) {
+        state.editId = quiz?.id || null;
+        document.getElementById('editorTitle').textContent = quiz ? 'Edit quiz' : 'Create a quiz';
+        quizForm.elements.title.value = quiz?.title || '';
+        quizForm.elements.description.value = quiz?.description || '';
+        questionEditors.replaceChildren();
+        (quiz?.questions || [{}]).forEach(createQuestionEditor);
+        document.getElementById('editorNotice').textContent = '';
+        editorOverlay.hidden = false;
+        quizForm.elements.title.focus();
+      }
+
+      function closeEditor() {
+        editorOverlay.hidden = true;
+        state.editId = null;
+      }
+
+      function saveQuiz(event) {
+        event.preventDefault();
+        const questions = [...questionEditors.children].map(card => ({
+          category: quizForm.elements.title.value.trim(),
+          question: card.querySelector('.question-prompt').value.trim(),
+          options: [...card.querySelectorAll('.option-edit input[type="text"]')].map(input => input.value.trim()),
+          answer: Number(card.querySelector('.option-edit input[type="radio"]:checked')?.value),
+          explanation: card.querySelector('.question-explanation').value.trim()
+        }));
+        const invalid = questions.find(question => !question.question || question.options.some(option => !option) || !Number.isInteger(question.answer));
+        if (invalid) {
+          document.getElementById('editorNotice').textContent = 'Fill in each question and all four answers, then select the correct answer.';
+          return;
+        }
+        const existing = quizzes.find(item => item.id === state.editId);
+        const quiz = {
+          id: existing?.id || `quiz-${Date.now()}`,
+          title: quizForm.elements.title.value.trim(),
+          description: quizForm.elements.description.value.trim(),
+          code: existing?.code || `${quizForm.elements.title.value.trim().replace(/[^a-z0-9]/gi, '').slice(0, 3).toUpperCase().padEnd(3, 'X')}-${Math.floor(100 + Math.random() * 900)}`,
+          emoji: existing?.emoji || '📝',
+          questions
+        };
+        const next = existing ? quizzes.map(item => item.id === quiz.id ? quiz : item) : [...quizzes, quiz];
+        if (!persist(QUIZZES_KEY, next)) return;
+        quizzes = next;
+        renderQuizList(searchInput.value);
+        closeEditor();
+        setPage('quizzes');
+        showToast(existing ? 'Quiz updated.' : `Quiz saved. Room code: ${quiz.code}`);
+      }
+
+      async function shareQuiz(quiz) {
+        try {
+          await navigator.clipboard.writeText(quiz.code);
+          showToast(`Room code ${quiz.code} copied.`);
+        } catch (error) {
+          showToast(`Share this room code: ${quiz.code}`);
+        }
+      }
+
+      document.addEventListener('click', event => {
+        const target = event.target instanceof Element ? event.target : null;
+        const pageButton = target?.closest('[data-page]');
+        if (pageButton) {
+          setPage(pageButton.dataset.page);
+          return;
+        }
+        const button = target?.closest('[data-action]');
+        if (!button) return;
+        const id = button.dataset.id;
+        const action = button.dataset.action;
+        if (action === 'start-quiz') startQuiz(id);
+        if (action === 'new-quiz') openEditor();
+        if (action === 'add-question') createQuestionEditor();
+        if (action === 'remove-question') {
+          if (questionEditors.children.length === 1) {
+            showToast('A quiz needs at least one question.');
+          } else {
+            button.closest('.question-editor').remove();
+            renumberQuestionEditors();
+          }
+        }
+        if (action === 'close-editor') closeEditor();
+        if (action === 'back-dashboard') showDashboard();
+        if (action === 'restart-quiz') startQuiz(state.currentQuiz?.id);
+        if (action === 'view-all') {
+          event.preventDefault();
+          setPage('quizzes');
+          document.getElementById('quizList').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (action === 'toggle-search') {
+          searchInput.hidden = !searchInput.hidden;
+          if (!searchInput.hidden) searchInput.focus();
+          else {
+            searchInput.value = '';
+            renderQuizList();
+          }
+        }
+        if (action === 'notifications') {
+          showToast(attempts.length ? `You've completed ${attempts.length} quiz${attempts.length === 1 ? '' : 'zes'}.` : 'No new activity yet. Start a quiz to begin!');
+        }
+        if (action === 'share-quiz') {
+          const quiz = quizzes.find(item => item.id === id);
+          if (quiz) shareQuiz(quiz);
+        }
+        if (action === 'edit-quiz') {
+          const quiz = quizzes.find(item => item.id === id);
+          if (quiz) openEditor(quiz);
+        }
+        if (action === 'delete-quiz') {
+          const quiz = quizzes.find(item => item.id === id);
+          if (quiz && confirm(`Delete “${quiz.title}”? This cannot be undone.`)) {
+            const next = quizzes.filter(item => item.id !== id);
+            if (persist(QUIZZES_KEY, next)) {
+              quizzes = next;
+              renderQuizList(searchInput.value);
+              showToast('Quiz deleted.');
+            }
+          }
+        }
+      });
+
+      searchInput.addEventListener('input', () => {
+        if (state.page !== 'quizzes') setPage('quizzes');
+        renderQuizList(searchInput.value);
+      });
+      quizForm.addEventListener('submit', saveQuiz);
+      document.getElementById('joinForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const code = document.getElementById('join-code').value.trim().toUpperCase();
+        const quiz = quizzes.find(item => item.code.toUpperCase() === code);
+        if (quiz) startQuiz(quiz.id);
+        else showToast(code ? 'Room code not found. Check the code and try again.' : 'Enter a room code first.');
+      });
+      editorOverlay.addEventListener('click', event => {
+        if (event.target === editorOverlay) closeEditor();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !editorOverlay.hidden) closeEditor();
+      });
+
+      renderQuizList();
+      updateDashboardStats();
+    </script>
+  </body>
+</html>
+

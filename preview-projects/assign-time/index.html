@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assign Time · ProjectHub</title>
+<style>
+body{max-width:750px;margin:2rem auto;padding:0 1rem;font:1rem system-ui;background:#f7f8f3;color:#23392f}
+button,input,select{font:inherit}button{padding:.45rem .7rem;cursor:pointer;border:1px solid #a5b5a4;border-radius:.4rem;background:white;color:inherit}
+.active,[aria-pressed=true],.assigned{background:#315c43;color:white}
+nav,#week-strip,fieldset{display:flex;gap:.45rem;flex-wrap:wrap;margin-block:1rem}
+#week-strip button span{display:block}
+.assignment{display:flex;gap:.7rem;align-items:center;background:white;padding:.8rem;margin-block:.6rem;border:1px solid #dce4d9;border-radius:.5rem}
+.assignment-copy{flex:1}.assignment h4{margin:0}.assignment button svg,.due-label svg{display:none}
+.complete-toggle::before{content:'○'}.complete-toggle.checked::before{content:'✓'}.delete-button::before{content:'Delete'}
+.tag,.assignment-meta{font-size:.9rem}.assignment-meta span+span{margin-left:.5rem}
+label{display:block;margin:.8rem 0}dialog{max-width:calc(100vw - 3rem);border:1px solid #a5b5a4;border-radius:.5rem}
+#toast{visibility:hidden}#toast.visible{visibility:visible}
+</style>
+</head>
+<body>
+<a href="../../ProjectHub%20Preview.html#/projects/assign-time">Back to ProjectHub</a>
+<h1>Assign Time</h1>
+<p>ProjectHub demo interface for the submitted assignment planner script.</p>
+<p><span id="top-date"></span> · <span id="streak"></span></p>
+<p><span id="welcome-date"></span> · <span id="due-count"></span> due this week · <span id="urgent-count"></span> urgent today</p>
+<button class="add-open">Add an assignment</button>
+<button id="reminder"><span id="reminder-label"></span></button>
+<nav aria-label="Assignment views"><button class="nav-link" data-view="today">Day</button><button class="nav-link" data-view="week">Week</button><button class="nav-link" data-view="done">Completed</button></nav>
+<div id="week-strip"></div>
+<details><summary>Weekly activity</summary><p><span id="week-count"></span> due this week · <span id="open-count"></span> open</p><p><span id="done-count"></span> completed · <span id="done-meta"></span></p><p>Next up · <span id="next-stat"></span> · <span id="next-meta"></span></p><div id="activity"></div></details>
+<h2 id="list-title"></h2>
+<p id="list-meta"></p>
+<button class="filter" data-filter="all">All</button> <button class="filter" data-filter="urgent">Urgent</button>
+<div id="assignment-list"></div>
+<p id="toast" role="status"></p>
+<dialog id="assignment-dialog" aria-labelledby="dialog-title">
+<h2 id="dialog-title">Add an assignment</h2>
+<button id="close-dialog" type="button">Close</button>
+<form id="assignment-form">
+<label>Assignment <input id="name" name="name" required></label>
+<label>Course <input name="course"></label>
+<label>Due date <input id="date" name="date" type="date" required></label>
+<label>Due time <input name="time" type="time" value="17:00" required></label>
+<label>Priority <select name="priority"><option value="normal">Normal</option><option value="high">High</option></select></label>
+<button type="submit">Add assignment</button> <button id="cancel-dialog" type="button">Cancel</button>
+</form>
+</dialog>
+<script>
+for (const id of ['reminder', 'close-dialog', 'cancel-dialog']) {
+  document.getElementById(id).addEventListener('click', event => event.stopPropagation());
+}
+</script>
+<script src="app.js"></script>
+</body>
+</html>

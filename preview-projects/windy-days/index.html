@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<!-- saved from url=(0072)file:///C:/Windy%20Days%20draft/baby-bears-starvation-quiz_Version2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windy Days</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: #1d2c4f;
+      background: #dff4ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        linear-gradient(rgba(16, 50, 82, 0.25), rgba(8, 25, 42, 0.3)),
+        linear-gradient(#6ecbff, #dff8ff 54%, #8dd98d 54%, #5ca753 100%);
+    }
+
+    body.scrolling-background { animation: scroll-page-background 1.5s linear forwards; }
+    body.scrolling-background .walkway { animation: scroll-walkway 1.5s linear; }
+    body.scrolling-background .walkway-flowers { animation: scroll-flowers 1.5s linear; }
+
+    .game {
+      position: relative;
+      width: min(820px, 100%);
+      overflow: hidden;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .game::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: none;
+      pointer-events: none;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 22px 24px 12px;
+      text-align: center;
+      background: linear-gradient(#fdd82c, #ffbe2c);
+      border-bottom: 4px solid #d68a00;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      color: #293d78;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-shadow: 2px 2px #fff4ad;
+    }
+
+    header p {
+      margin: 0;
+      color: #3c4d7f;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .gameplay-stage {
+      position: relative;
+      min-height: 300px;
+    }
+
+    .bears {
+      position: absolute;
+      left: 14%;
+      bottom: 12px;
+      display: flex;
+      transition: transform .45s ease;
+      z-index: 3;
+    }
+
+    .walkway {
+      position: absolute;
+      right: 3%;
+      bottom: 8px;
+      left: 3%;
+      height: 12px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(90deg, #96653e 0 42px, #b88450 42px 84px);
+      box-shadow: 0 3px 0 #634227;
+      z-index: 1;
+    }
+
+    .walkway-flowers {
+      position: absolute;
+      right: 5%;
+      bottom: 16px;
+      left: 5%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      font-size: clamp(18px, 2.5vw, 26px);
+      line-height: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .milestone-sign {
+      display: none;
+      position: absolute;
+      right: 7%;
+      bottom: 42px;
+      z-index: 4;
+      padding: 8px 12px;
+      max-width: min(580px, 84%);
+      border: 3px solid #70451f;
+      border-radius: 8px;
+      background: #ffe478;
+      color: #54351e;
+      font-weight: 900;
+      font-size: clamp(.65rem, 1.4vw, 1.05rem);
+      text-align: center;
+      white-space: normal;
+      box-shadow: 0 3px 0 rgba(63, 42, 23, .3);
+    }
+
+    .milestone-sign.show { display: block; animation: sign-pop .3s ease-out; }
+    .milestone-sign::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 7px;
+      height: 24px;
+      transform: translateX(-50%);
+      background: #70451f;
+    }
+
+    .bear-sprite {
+      display: block;
+      width: clamp(90px, 15vw, 130px);
+      height: 145px;
+      object-fit: contain;
+    }
+
+    .gusting { transform: translateX(150%) rotate(12deg); }
+    .jumping .bear-sprite { animation: jump .75s cubic-bezier(.33, .9, .4, 1); }
+    .victory-jumping .bear-sprite { animation: victory-jump 1.35s cubic-bezier(.3, .8, .35, 1) forwards; }
+    .walking { animation: walk-to-cloud 1.5s steps(3, end) forwards; }
+    .walking .bear-sprite { animation: footsteps .5s ease-in-out 3; }
+    .hugging .bear-sprite { animation: hug .8s ease-in-out infinite alternate; }
+    .cloud.left { left: 12%; right: auto; }
+
+    .cloud {
+      display: none;
+      position: absolute;
+      right: 12%;
+      bottom: 28px;
+      font-size: 64px;
+      animation: bob 1.6s ease-in-out infinite alternate;
+      z-index: 2;
+    }
+
+    body.scrolling-background .cloud {
+      animation: bob 1.6s ease-in-out infinite alternate, cloud-forward-left 1.5s linear forwards;
+    }
+
+    body.scrolling-background .cloud.left {
+      animation: bob 1.6s ease-in-out infinite alternate, cloud-forward-right 1.5s linear forwards;
+    }
+
+    .question-prompt {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      z-index: 4;
+      width: 84%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: #233b61;
+      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+    }
+
+    .question-prompt h2 {
+      margin: 0;
+      font-size: clamp(1rem, 2.4vw, 1.35rem);
+    }
+
+    .gust {
+      display: none;
+      position: absolute;
+      left: -20%;
+      top: 45px;
+      font-size: 48px;
+      white-space: nowrap;
+      color: #fff;
+      text-shadow: 0 2px 6px #5296bd;
+    }
+
+    .gust.show { display: block; animation: blow .7s ease-out; }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .home-screen {
+      padding: 28px 24px 32px;
+      background: transparent;
+    }
+
+    .home-panel {
+      text-align: center;
+      padding: 20px 18px 8px;
+    }
+
+    .home-badge {
+      display: inline-block;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: #ffdd5a;
+      color: #234a72;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: .72rem;
+      margin-bottom: 12px;
+    }
+
+    .home-panel h2 {
+      margin: 0 0 10px;
+      color: #273d76;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+    }
+
+    .home-panel p {
+      margin: 0 0 20px;
+      color: #4e6077;
+      font-size: 1.05rem;
+    }
+
+    .character-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 14px;
+      margin: 20px 0 26px;
+    }
+
+    .character-card {
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+      padding: 18px 12px 16px;
+      border: none;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      color: inherit;
+      font: inherit;
+      box-shadow: none;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .character-card:hover {
+      transform: translateY(-2px);
+      border-color: #7dbaf0;
+      box-shadow: 0 10px 18px rgba(80, 118, 164, 0.12);
+    }
+
+    .character-card.selected {
+      border: none;
+      background: rgba(255, 245, 234, 0.9);
+      box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.2);
+    }
+
+    .character-avatar {
+      display: block;
+      width: 100px;
+      height: 110px;
+      object-fit: contain;
+    }
+
+    .character-name {
+      font-weight: 800;
+      color: #314a70;
+    }
+
+    .start-button, .restart {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(#ff5a5a, #d53434);
+      border: 3px solid #ba2b2b;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 0 rgba(107, 28, 28, 0.25);
+      transition: transform .15s ease;
+    }
+
+    .start-button:hover, .restart:hover {
+      transform: translateY(-2px);
+    }
+
+    .content { padding: 20px 24px 24px; }
+    .progress { color: #61798d; font-weight: 700; }
+    h2 { margin: 10px 0 16px; font-size: 1.35rem; }
+
+    .answers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answers button {
+      min-height: 100px;
+      padding: 28px 34px 18px;
+      border: 0;
+      border-radius: 0;
+      background:
+        radial-gradient(ellipse 22% 30% at 22% 61%, #fff 98%, transparent 100%),
+        radial-gradient(ellipse 25% 38% at 40% 42%, #fff 98%, transparent 100%),
+        radial-gradient(ellipse 25% 39% at 61% 40%, #fff 98%, transparent 100%),
+        radial-gradient(ellipse 21% 30% at 79% 60%, #fff 98%, transparent 100%),
+        radial-gradient(ellipse 48% 34% at 50% 68%, #fff 98%, transparent 100%);
+      filter: drop-shadow(0 5px 2px rgba(49, 88, 123, 0.3));
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .answers button:hover:not(:disabled) {
+      background:
+        radial-gradient(ellipse 22% 30% at 22% 61%, #f0faff 98%, transparent 100%),
+        radial-gradient(ellipse 25% 38% at 40% 42%, #f0faff 98%, transparent 100%),
+        radial-gradient(ellipse 25% 39% at 61% 40%, #f0faff 98%, transparent 100%),
+        radial-gradient(ellipse 21% 30% at 79% 60%, #f0faff 98%, transparent 100%),
+        radial-gradient(ellipse 48% 34% at 50% 68%, #f0faff 98%, transparent 100%);
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 2px solid #c9ddeb;
+      border-radius: 12px;
+      background: #f7fbff;
+      color: inherit;
+      padding: 12px 14px;
+      text-align: left;
+      transition: transform .15s, background .15s, border-color .15s;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: #edf8ff;
+      border-color: #78b9df;
+    }
+
+    button:focus-visible {
+      outline: 3px solid #286fa2;
+      outline-offset: 2px;
+    }
+
+    button:disabled { cursor: default; opacity: .7; }
+
+    .feedback {
+      min-height: 52px;
+      margin: 14px 0 8px;
+      line-height: 1.45;
+    }
+
+    .reward {
+      display: none;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff5d8;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .reward.show { display: block; animation: pop .35s ease; }
+
+    .restart {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(#2a8fd7, #1a6dad);
+      border-color: #1a6dad;
+      box-shadow: 0 8px 0 rgba(24, 78, 114, 0.3);
+    }
+
+    .restart.show { display: block; }
+    .ending { display: none; text-align: center; }
+    .ending.show { display: block; }
+    .ending h2 { color: #397caf; }
+    .hug { font-size: 2rem; }
+
+    .note {
+      margin: 14px 0 0;
+      font-size: .9rem;
+      color: #627586;
+    }
+
+    @keyframes blow {
+      from { transform: translateX(0); }
+      to { transform: translateX(850px); }
+    }
+    @keyframes jump {
+      0%, 100% { transform: translateY(0) scale(1); }
+      45% { transform: translateY(-52px) scale(1.08); }
+      70% { transform: translateY(-30px) scale(1.04); }
+    }
+    @keyframes victory-jump {
+      0% { transform: translateY(0) scale(1); }
+      35% { transform: translateY(-150px) scale(1.12); }
+      70% { transform: translateY(-320px) scale(1.08); }
+      100% { transform: translateY(-520px) scale(.9); }
+    }
+    @keyframes walk-to-cloud {
+      from { left: var(--walk-from); }
+      to { left: var(--walk-to); }
+    }
+    @keyframes footsteps {
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes scroll-page-background {
+      from { background-position: 0 0, 50% center, 0 0; }
+      to { background-position: 0 0, 70% center, 0 0; }
+    }
+    @keyframes scroll-walkway {
+      to { background-position: -168px 0; }
+    }
+    @keyframes scroll-flowers {
+      to { transform: translateX(-34px); }
+    }
+    @keyframes bob { to { transform: translateY(-10px); } }
+    @keyframes cloud-forward-left {
+      from { right: 12%; }
+      to { right: 52%; }
+    }
+    @keyframes cloud-forward-right {
+      from { left: 12%; }
+      to { left: 52%; }
+    }
+    @keyframes pop {
+      0% { transform: scale(.8); }
+      70% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    @keyframes sign-pop {
+      from { transform: scale(.7) rotate(-2deg); }
+      to { transform: scale(1) rotate(-2deg); }
+    }
+    @keyframes hug {
+      from { transform: scale(1); }
+      to { transform: scale(1.12); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body class="">
+  <main class="game">
+    <section class="screen home-screen active" id="homeScreen" aria-label="Home page">
+      <div class="home-panel">
+        <div class="home-badge">Level 1</div>
+        <h2>Choose Your Hero</h2>
+        <p>Pick a character and start the adventure across the clouds.</p>
+
+        <div class="character-picker" id="characterPicker" aria-label="Character selection">
+          <button class="character-card" type="button" data-character="benny" data-name="Benny Bear" data-image="benny-bear.png">
+            <img class="character-avatar" src="benny-bear.png" alt="">
+            <span class="character-name">Benny Bear</span>
+          </button>
+          <button class="character-card selected" type="button" data-character="pip" data-name="Pip Panda" data-image="pip-panda.png">
+            <img class="character-avatar" src="pip-panda.png" alt="">
+            <span class="character-name">Pip Panda</span>
+          </button>
+          <button class="character-card" type="button" data-character="snow" data-name="Snow Bear" data-image="snow-bear.png">
+            <img class="character-avatar" src="snow-bear.png" alt="">
+            <span class="character-name">Snow Bear</span>
+          </button>
+        </div>
+
+        <button class="start-button" id="startGame" type="button">Start Adventure</button>
+      </div>
+    </section>
+
+    <section class="screen gameplay-screen" id="gameplayScreen" aria-label="Game area">
+      <header>
+        <h1>Windy Days</h1>
+        <p id="selectedCharacterText">Player: Pip Panda</p>
+      </header>
+
+      <div class="gameplay-stage" aria-label="The bears' adventure">
+        <div class="gust" id="gust" aria-hidden="true">💨 WHOOSH! 💨</div>
+        <div class="question-prompt" aria-live="polite">
+          <h2 id="question">Why is child starvation a problem?</h2>
+        </div>
+        <div class="walkway" aria-hidden="true"></div>
+        <div class="walkway-flowers" aria-hidden="true">
+          <span>🪷</span><span>🌹</span><span>🪷</span><span>🌹</span>
+          <span>🪷</span><span>🌹</span><span>🪷</span><span>🌹</span>
+        </div>
+        <div class="milestone-sign" id="milestoneSign" aria-live="polite" aria-hidden="true"></div>
+        <div class="bears" id="bears" aria-label="Pip Panda" style="--walk-from: 14%; --walk-to: calc(100% - 140px); left: 14%;">
+          <img class="bear-sprite" id="bearSprite" src="pip-panda.png" alt="Pip Panda">
+        </div>
+        <div class="cloud" id="cloud" aria-hidden="true" style="display: none;">☁️</div>
+      </div>
+
+      <section class="content">
+        <div id="quiz" style="display: block;">
+          <div class="progress" id="progress">Question 1 of 10</div>
+          <div class="answers" id="answers"><button>It can harm a child's growth, health, and ability to learn.</button><button>It only makes children feel hungry for a little while.</button><button>It helps children become stronger without food.</button></div>
+          <p class="feedback" id="feedback" aria-live="polite"></p>
+          <div class="reward" id="reward">🍖 The bears found a piece of meat! Great answer!</div>
+          <p class="note">Meat is one possible source of protein; balanced meals can include many different foods.</p>
+        </div>
+
+        <div class="ending" id="ending" aria-live="polite">
+          <div class="hug">🐻 🤗 🐼 🤗 🐻‍❄️</div>
+          <h2>All three bears made it!</h2>
+          <p><strong>Preventing child starvation takes care and teamwork:</strong> provide a balanced, nourishing diet and spread awareness. Clean water, healthcare, and reliable access to food matter too. Children who are malnourished need support from qualified health workers.</p>
+          <p>With awareness and action, communities can help children grow and thrive. 💛</p>
+          <button class="restart show" id="restart">Play again</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        question: "Why is child starvation a problem?",
+        answers: [
+          "It can harm a child's growth, health, and ability to learn.",
+          "It only makes children feel hungry for a little while.",
+          "It helps children become stronger without food."
+        ],
+        correct: 0,
+        explanation: "Not getting enough nourishing food can affect growth, health, learning, and—in severe cases—survival."
+      },
+      {
+        question: "Why are some children starving?",
+        answers: [
+          "Only children being picky eaters.",
+          "Poverty, food shortages, conflict, illness, and unsafe water or sanitation.",
+          "Having too many healthy foods to choose from."
+        ],
+        correct: 1,
+        explanation: "There can be many connected causes, including poverty, emergencies, illness, and limited access to nutritious food."
+      },
+      {
+        question: "How can child starvation be prevented and treated?",
+        answers: [
+          "Give every child the exact same food and avoid medical care.",
+          "Provide nourishing balanced meals, clean water, healthcare, and help from trained health workers.",
+          "Wait and hope the problem goes away by itself."
+        ],
+        correct: 1,
+        explanation: "Prevention includes good nutrition, clean water, and healthcare. Children who are malnourished may need prompt, professional treatment."
+      },
+      {
+        question: "What are possible long-term consequences of child starvation?",
+        answers: [
+          "It can affect physical growth, brain development, learning, and later health.",
+          "It only affects appetite for one meal.",
+          "It causes exactly the same effects in every child."
+        ],
+        correct: 0,
+        explanation: "Long-term undernutrition can affect growth, development, and health. Effects vary, and timely nutrition and qualified care can help."
+      },
+      {
+        question: "What can contribute to maternal and infant feeding difficulties?",
+        answers: [
+          "Health conditions, latching or swallowing challenges, prematurity, or limited access to skilled support.",
+          "Only a caregiver not trying hard enough.",
+          "Feeding challenges never have medical or practical causes."
+        ],
+        correct: 0,
+        explanation: "Feeding difficulties can have many causes. Families deserve compassionate support and advice from qualified health workers."
+      },
+      {
+        question: "How can a community help children facing hunger?",
+        answers: [
+          "Connect families with reliable food, clean water, healthcare, and local support.",
+          "Blame families and keep available help private.",
+          "Replace professional care with guesses from social media."
+        ],
+        correct: 0,
+        explanation: "Food programs, clean water, healthcare, and community support can work together to help children thrive."
+      },
+      {
+        question: "Why is a variety of nourishing foods helpful for children?",
+        answers: [
+          "Different foods can provide different nutrients children need to grow.",
+          "Children should eat only one kind of food every day.",
+          "Food variety is never important for health."
+        ],
+        correct: 0,
+        explanation: "A varied, balanced diet can provide a range of nutrients. The right foods depend on a child's age, needs, and circumstances."
+      },
+      {
+        question: "How can unsafe water and poor sanitation affect child nutrition?",
+        answers: [
+          "They can increase illness, which can make it harder for children to stay nourished.",
+          "They have no connection to children's health.",
+          "They make every food more nutritious."
+        ],
+        correct: 0,
+        explanation: "Safe water, sanitation, and hygiene help protect children from illness and support good nutrition."
+      },
+      {
+        question: "What should a caregiver do if a child may be severely malnourished?",
+        answers: [
+          "Seek prompt assessment and care from a qualified health worker.",
+          "Wait a long time before asking anyone for help.",
+          "Use an unverified online remedy instead of health care."
+        ],
+        correct: 0,
+        explanation: "Severe malnutrition needs prompt professional assessment and care; caregivers should contact qualified health services."
+      },
+      {
+        question: "How can schools help children facing hunger?",
+        answers: [
+          "Offer nutritious meal support and help families connect with local services.",
+          "Shame children who need help.",
+          "Keep children from eating during the school day."
+        ],
+        correct: 0,
+        explanation: "School meal programs and respectful links to community support can help children access nourishing food."
+      }
+    ];
+
+    let current = 0;
+    let locked = false;
+    let selectedCharacter = "benny";
+    let selectedCharacterName = "Benny Bear";
+    let selectedCharacterImage = "pip-panda.png";
+    let bearAtRight = false;
+
+    const homeScreen = document.getElementById("homeScreen");
+    const gameplayScreen = document.getElementById("gameplayScreen");
+    const startGameButton = document.getElementById("startGame");
+    const characterButtons = [...document.querySelectorAll(".character-card")];
+    const bears = document.getElementById("bears");
+    const bearSprite = document.getElementById("bearSprite");
+    const gust = document.getElementById("gust");
+    const cloud = document.getElementById("cloud");
+    const milestoneSign = document.getElementById("milestoneSign");
+    const progress = document.getElementById("progress");
+    const questionText = document.getElementById("question");
+    const answersBox = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+    const reward = document.getElementById("reward");
+    const quiz = document.getElementById("quiz");
+    const ending = document.getElementById("ending");
+
+    function renderCharacterSet() {
+      bearSprite.src = selectedCharacterImage;
+      bearSprite.alt = selectedCharacterName;
+      bears.setAttribute("aria-label", selectedCharacterName);
+      document.getElementById("selectedCharacterText").textContent = `Player: ${selectedCharacterName}`;
+    }
+
+    characterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        characterButtons.forEach((card) => card.classList.toggle("selected", card === button));
+        selectedCharacter = button.dataset.character;
+        selectedCharacterName = button.dataset.name;
+        selectedCharacterImage = button.dataset.image;
+        renderCharacterSet();
+      });
+    });
+
+    startGameButton.addEventListener("click", () => {
+      homeScreen.classList.remove("active");
+      gameplayScreen.classList.add("active");
+      renderCharacterSet();
+      showQuestion();
+    });
+
+    function showQuestion() {
+      locked = false;
+      progress.textContent = `Question ${current + 1} of ${questions.length}`;
+      questionText.textContent = questions[current].question;
+      feedback.textContent = "";
+      answersBox.replaceChildren();
+      reward.classList.remove("show");
+      cloud.style.display = "none";
+      const milestoneMessage = current === 4
+        ? "Good Job Kiddo!!!!!"
+        : current === questions.length - 1
+          ? "THANKK YOUUU FORRRR PLAYINGGGGGGGGGGGGGGG!!!!!!!"
+          : "";
+      milestoneSign.textContent = milestoneMessage;
+      milestoneSign.classList.toggle("show", Boolean(milestoneMessage));
+      milestoneSign.setAttribute("aria-hidden", String(!milestoneMessage));
+      gust.classList.remove("show");
+      bears.classList.remove("gusting", "jumping", "walking");
+
+      questions[current].answers.forEach((answer, index) => {
+        const button = document.createElement("button");
+        button.textContent = answer;
+        button.addEventListener("click", () => chooseAnswer(index));
+        answersBox.appendChild(button);
+      });
+    }
+
+    function chooseAnswer(index) {
+      if (locked) return;
+
+      const item = questions[current];
+      const buttons = [...answersBox.querySelectorAll("button")];
+
+      if (index !== item.correct) {
+        feedback.textContent = "Not quite—try again! A gust of wind is blowing the bears away!";
+        gust.classList.remove("show");
+        void gust.offsetWidth;
+        gust.classList.add("show");
+        bears.classList.add("gusting");
+
+        window.setTimeout(() => {
+          bears.classList.remove("gusting");
+          gust.classList.remove("show");
+        }, 700);
+        return;
+      }
+
+      locked = true;
+      buttons.forEach(button => button.disabled = true);
+      feedback.textContent = item.explanation;
+      reward.classList.add("show");
+      bears.classList.add("jumping");
+      const isFinalQuestion = current === questions.length - 1;
+      cloud.style.display = isFinalQuestion ? "none" : "block";
+      window.setTimeout(isFinalQuestion ? startFinalJump : startWalking, 900);
+    }
+
+    function startFinalJump() {
+      bears.classList.remove("jumping");
+      bears.classList.add("victory-jumping");
+    }
+
+    function startWalking() {
+      bears.classList.remove("jumping");
+      document.body.classList.remove("scrolling-background");
+      void document.body.offsetWidth;
+      document.body.classList.add("scrolling-background");
+      bears.style.setProperty("--walk-from", bearAtRight ? "calc(100% - 140px)" : "14%");
+      bears.style.setProperty("--walk-to", bearAtRight ? "14%" : "calc(100% - 140px)");
+      cloud.classList.toggle("left", bearAtRight);
+      bears.classList.add("walking");
+    }
+
+    bears.addEventListener("animationend", (event) => {
+      if (event.animationName === "victory-jump") {
+        current = 0;
+        bearAtRight = false;
+        bears.style.left = "14%";
+        bears.classList.remove("victory-jumping", "hugging");
+        cloud.classList.remove("left");
+        document.body.classList.remove("scrolling-background");
+        quiz.style.display = "block";
+        ending.classList.remove("show");
+        gameplayScreen.classList.remove("active");
+        homeScreen.classList.add("active");
+        showQuestion();
+        return;
+      }
+
+      if (event.animationName !== "walk-to-cloud") return;
+      document.body.classList.remove("scrolling-background");
+      bearAtRight = !bearAtRight;
+      bears.style.left = bearAtRight ? "calc(100% - 140px)" : "14%";
+      bears.classList.remove("walking");
+      if (current < questions.length - 1) {
+        current++;
+        showQuestion();
+      } else {
+        quiz.style.display = "none";
+        ending.classList.add("show");
+        bears.classList.add("hugging");
+      }
+    });
+
+    document.getElementById("restart").addEventListener("click", () => {
+      current = 0;
+      bearAtRight = false;
+      bears.style.left = "14%";
+      cloud.classList.remove("left");
+      document.body.classList.remove("scrolling-background");
+      quiz.style.display = "block";
+      ending.classList.remove("show");
+      bears.classList.remove("hugging");
+      showQuestion();
+    });
+
+    renderCharacterSet();
+  </script>
+
+</body></html>

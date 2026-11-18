@@ -1,0 +1,640 @@
+generator client {
+ provider = "prisma-client-js"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+enum Role {
+ USER
+ TEACHER
+ ADMIN
+}
+enum Visibility {
+ PUBLIC
+ PRIVATE
+ UNLISTED
+ INSTITUTION
+ COURSE
+ SCHEDULED
+}
+enum RequestType {
+ COMMENT
+ COLLABORATION
+ CLONE
+}
+enum RequestStatus {
+ PENDING
+ ACCEPTED
+ REJECTED
+ CANCELLED
+ COMPLETED
+ NEEDS_INFO
+ EXPIRED
+}
+enum Permission {
+ VIEWER
+ COMMENTER
+ CONTRIBUTOR
+ EDITOR
+ MANAGER
+}
+model User {
+ id String @id @default(cuid())
+ name String?
+ email String? @unique
+ emailVerified DateTime?
+ passwordHash String?
+ studentId String?
+ termsAcceptedAt DateTime?
+ communityAcceptedAt DateTime?
+ privacyAcceptedAt DateTime?
+ collaborationRulesAcceptedAt DateTime?
+ image String?
+ role Role @default(USER)
+ suspended Boolean @default(false)
+ deletedAt DateTime?
+ emailNotifications Boolean @default(true)
+ inAppNotifications Boolean @default(true)
+ createdAt DateTime @default(now())
+ accounts Account[]
+ sessions Session[]
+ profile Profile?
+ projects Project[]
+ requests Request[]
+ collaborators Collaborator[]
+ comments Comment[]
+ engagements Engagement[]
+ notifications Notification[]
+ ratings Rating[]
+ reports Report[]
+ recommendations Recommendation[]
+ emailChallenges EmailChallenge[]
+ consents Consent[]
+ projectOwnerships ProjectOwner[]
+ sentOwnershipTransfers OwnershipTransfer[] @relation("TransferSender")
+ receivedOwnershipTransfers OwnershipTransfer[] @relation("TransferRecipient")
+ authoredVersions ProjectVersion[]
+ teachingCourses Course[] @relation("CourseTeacher")
+ courseMemberships CourseMembership[]
+ classMemberships ClassMember[]
+ submissions Submission[]
+ assignedTasks WorkspaceTask[]
+ blocks UserBlock[] @relation("Blocker")
+ blockedBy UserBlock[] @relation("Blocked")
+ followedCategories FollowedCategory[]
+ savedSearches SavedSearch[]
+ notificationPreferences NotificationPreference[]
+ projectFollows ProjectFollow[]
+ viewHistory ViewHistory[]
+ @@index([emailVerified,suspended])
+}
+model Account {
+ id String @id @default(cuid())
+ userId String
+ type String
+ provider String
+ providerAccountId String
+ refresh_token String? @db.Text
+ access_token String? @db.Text
+ expires_at Int?
+ token_type String?
+ scope String?
+ id_token String? @db.Text
+ session_state String?
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@unique([provider,providerAccountId])
+}
+model Session {
+ id String @id @default(cuid())
+ sessionToken String @unique
+ userId String
+ expires DateTime
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+}
+model VerificationToken {
+ identifier String
+ token String @unique
+ expires DateTime
+ @@unique([identifier,token])
+}
+model Profile {
+ userId String @id
+ bio String @default("")
+ institution String @default("")
+ interests String[]
+ skills String[]
+ technologies String[]
+ links String[]
+ public Boolean @default(true)
+ showInstitution Boolean @default(false)
+ showDomainBadge Boolean @default(false)
+ showCollaborations Boolean @default(false)
+ showAvailability Boolean @default(false)
+ showInRankings Boolean @default(false)
+ personalizedRecommendations Boolean @default(true)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+}
+model Institution {
+ id String @id @default(cuid())
+ name String @unique
+ projects Project[]
+ courses Course[]
+}
+model Course {
+ id String @id @default(cuid())
+ name String
+ institutionId String
+ teacherId String?
+ description String @default("")
+ archived Boolean @default(false)
+ teacher User? @relation("CourseTeacher",fields:[teacherId],references:[id],onDelete:SetNull)
+ memberships CourseMembership[]
+ classes ClassGroup[]
+ assignments Assignment[]
+ collections CourseCollection[]
+ institution Institution @relation(fields:[institutionId],references:[id])
+ projects Project[]
+ @@unique([name,institutionId])
+}
+model Category {
+ id String @id @default(cuid())
+ name String @unique
+ projects Project[]
+ followers FollowedCategory[]
+}
+model Tag {
+ id String @id @default(cuid())
+ name String @unique
+ projects ProjectTag[]
+}
+model ProjectTag {
+ projectId String
+ tagId String
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ tag Tag @relation(fields:[tagId],references:[id],onDelete:Cascade)
+ @@id([projectId,tagId])
+}
+model Project {
+ id String @id @default(cuid())
+ title String
+ summary String
+ description String @db.Text
+ ownerId String
+ categoryId String
+ institutionId String
+ courseId String?
+ academicLevel String
+ projectType String
+ technologies String[]
+ cover String @default("forest")
+ license String @default("All rights reserved")
+ customLicense String @default("")
+ status String @default("DRAFT")
+ scheduledAt DateTime?
+ languages String[] @default([])
+ commentPolicy String @default("MODERATED")
+ clonePolicy String @default("MANUAL")
+ rightsConfirmedAt DateTime?
+ integrityStatement String @default("")
+ recommendable Boolean @default(true)
+ visibility Visibility @default(PRIVATE)
+ collaboration String @default("OPEN")
+ cloningAllowed Boolean @default(true)
+ commentsApproval Boolean @default(true)
+ featured Boolean @default(false)
+ archived Boolean @default(false)
+ deletedAt DateTime?
+ publishedAt DateTime @default(now())
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ originalId String?
+ original Project? @relation("Derivatives",fields:[originalId],references:[id])
+ derivatives Project[] @relation("Derivatives")
+ owner User @relation(fields:[ownerId],references:[id])
+ category Category @relation(fields:[categoryId],references:[id])
+ institution Institution @relation(fields:[institutionId],references:[id])
+ course Course? @relation(fields:[courseId],references:[id])
+ tags ProjectTag[]
+ files ProjectFile[]
+ links ProjectLink[]
+ contributors Contributor[]
+ collaborators Collaborator[]
+ requests Request[]
+ comments Comment[]
+ engagements Engagement[]
+ views ProjectView[]
+ ratings Rating[]
+ activity Activity[]
+ recommendations Recommendation[]
+ owners ProjectOwner[]
+ ownershipTransfers OwnershipTransfer[]
+ versions ProjectVersion[]
+ submissions Submission[]
+ collections CollectionProject[]
+ tasks WorkspaceTask[]
+ followers ProjectFollow[]
+ viewHistory ViewHistory[]
+ @@index([status,visibility,scheduledAt])
+ @@index([visibility,deletedAt,publishedAt])
+ @@index([ownerId,updatedAt])
+ @@index([categoryId])
+ @@index([featured])
+}
+model ProjectFile {
+ id String @id @default(cuid())
+ projectId String
+ versionId String?
+ name String
+ key String @unique
+ mime String
+ size Int
+ sha256 String
+ isCover Boolean @default(false)
+ scanStatus String @default("PENDING")
+ version ProjectVersion? @relation(fields:[versionId],references:[id],onDelete:Restrict)
+ createdAt DateTime @default(now())
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@index([projectId,scanStatus])
+}
+model ProjectLink {
+ id String @id @default(cuid())
+ projectId String
+ kind String
+ url String
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+}
+model Contributor {
+ id String @id @default(cuid())
+ projectId String
+ name String
+ contribution String
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+}
+model Collaborator {
+ projectId String
+ userId String
+ permission Permission @default(VIEWER)
+ createdAt DateTime @default(now())
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([projectId,userId])
+}
+// Unified typed request table provides atomic approval and a common audit trail.
+model Request {
+ id String @id @default(cuid())
+ projectId String
+ userId String
+ type RequestType
+ status RequestStatus @default(PENDING)
+ message String @db.Text
+ details Json
+ permission Permission @default(VIEWER)
+ response String?
+ privateNote String?
+ expiresAt DateTime?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([projectId,status,createdAt])
+ @@index([userId,type])
+}
+model Comment {
+ id String @id @default(cuid())
+ projectId String
+ userId String
+ parentId String?
+ body String @db.Text
+ status String @default("PUBLIC")
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ parent Comment? @relation("Replies",fields:[parentId],references:[id])
+ replies Comment[] @relation("Replies")
+ @@index([projectId,status,createdAt])
+}
+model Engagement {
+ projectId String
+ userId String
+ kind String
+ createdAt DateTime @default(now())
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([projectId,userId,kind])
+ @@index([kind,createdAt])
+}
+model ProjectView {
+ id String @id @default(cuid())
+ projectId String
+ visitorHash String
+ totalViews Int @default(1)
+ day String
+ referrer String?
+ createdAt DateTime @default(now())
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@unique([projectId,visitorHash,day])
+ @@index([projectId,createdAt])
+}
+model Rating {
+ projectId String
+ userId String
+ score Int
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([projectId,userId])
+}
+model Notification {
+ id String @id @default(cuid())
+ userId String
+ title String
+ href String
+ readAt DateTime?
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([userId,readAt,createdAt])
+}
+model EmailEvent {
+ id String @id @default(cuid())
+ dedupeKey String @unique
+ recipient String
+ subject String
+ html String @db.Text
+ status String @default("PENDING")
+ attempts Int @default(0)
+ error String?
+ nextAttemptAt DateTime @default(now())
+ sentAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([status,nextAttemptAt])
+}
+model Report {
+ id String @id @default(cuid())
+ userId String
+ targetId String
+ targetType String
+ category String @default("GENERAL")
+ reason String
+ status String @default("OPEN")
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([status,createdAt])
+}
+model ModerationAction {
+ id String @id @default(cuid())
+ adminId String
+ targetId String
+ action String
+ reason String
+ createdAt DateTime @default(now())
+}
+model AuditLog {
+ id String @id @default(cuid())
+ actorId String
+ action String
+ targetId String
+ createdAt DateTime @default(now())
+ @@index([actorId,createdAt])
+}
+model Recommendation {
+ id String @id @default(cuid())
+ userId String
+ projectId String
+ score Float
+ reason String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@unique([userId,projectId])
+}
+model Activity {
+ id String @id @default(cuid())
+ projectId String
+ actorId String?
+ kind String
+ public Boolean @default(false)
+ createdAt DateTime @default(now())
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@index([projectId,createdAt])
+}
+model RateLimit {
+ key String @id
+ count Int @default(1)
+ expiresAt DateTime
+ @@index([expiresAt])
+}
+
+model EmailChallenge {
+ id String @id @default(cuid())
+ userId String
+ email String
+ purpose String
+ secretHash String
+ expiresAt DateTime
+ attempts Int @default(0)
+ usedAt DateTime?
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([userId,purpose,createdAt])
+ @@index([email,purpose,expiresAt])
+}
+model Consent {
+ id String @id @default(cuid())
+ userId String
+ policy String
+ version String
+ acceptedAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([userId,policy])
+}
+model ProjectOwner {
+ projectId String
+ userId String
+ addedAt DateTime @default(now())
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+ @@id([projectId,userId])
+ @@index([userId])
+}
+model OwnershipTransfer {
+ id String @id @default(cuid())
+ projectId String
+ fromUserId String
+ toUserId String
+ kind String @default("TRANSFER")
+ status String @default("PENDING")
+ expiresAt DateTime
+ createdAt DateTime @default(now())
+ resolvedAt DateTime?
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ fromUser User @relation("TransferSender",fields:[fromUserId],references:[id],onDelete:Restrict)
+ toUser User @relation("TransferRecipient",fields:[toUserId],references:[id],onDelete:Restrict)
+ @@index([projectId,status])
+ @@index([toUserId,status])
+}
+model ProjectVersion {
+ id String @id @default(cuid())
+ projectId String
+ label String
+ title String
+ notes String
+ snapshot Json
+ status String @default("DRAFT")
+ authorId String
+ createdAt DateTime @default(now())
+ publishedAt DateTime?
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ author User @relation(fields:[authorId],references:[id],onDelete:Restrict)
+ files ProjectFile[]
+ @@unique([projectId,label])
+ @@index([projectId,status,publishedAt])
+}
+model CourseMembership {
+ courseId String
+ userId String
+ status String @default("PENDING")
+ role String @default("STUDENT")
+ createdAt DateTime @default(now())
+ course Course @relation(fields:[courseId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([courseId,userId])
+ @@index([userId,status])
+}
+model ClassGroup {
+ id String @id @default(cuid())
+ courseId String
+ name String
+ course Course @relation(fields:[courseId],references:[id],onDelete:Cascade)
+ members ClassMember[]
+ @@unique([courseId,name])
+}
+model ClassMember {
+ classId String
+ userId String
+ class ClassGroup @relation(fields:[classId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([classId,userId])
+}
+model Assignment {
+ id String @id @default(cuid())
+ courseId String
+ title String
+ description String
+ deadline DateTime?
+ rubric Json @default("[]")
+ maxScore Float @default(100)
+ requiresReview Boolean @default(true)
+ createdAt DateTime @default(now())
+ course Course @relation(fields:[courseId],references:[id],onDelete:Cascade)
+ submissions Submission[]
+ @@index([courseId,deadline])
+}
+model Submission {
+ id String @id @default(cuid())
+ assignmentId String
+ projectId String
+ userId String
+ status String @default("SUBMITTED")
+ grade Float?
+ feedback String?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ assignment Assignment @relation(fields:[assignmentId],references:[id],onDelete:Cascade)
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+ @@unique([assignmentId,projectId])
+ @@index([userId,status])
+}
+model CourseCollection {
+ id String @id @default(cuid())
+ courseId String
+ title String
+ public Boolean @default(false)
+ course Course @relation(fields:[courseId],references:[id],onDelete:Cascade)
+ projects CollectionProject[]
+ @@index([courseId,public])
+}
+model CollectionProject {
+ collectionId String
+ projectId String
+ collection CourseCollection @relation(fields:[collectionId],references:[id],onDelete:Cascade)
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@id([collectionId,projectId])
+}
+model WorkspaceTask {
+ id String @id @default(cuid())
+ projectId String
+ title String
+ description String @default("")
+ status String @default("TODO")
+ assigneeId String?
+ dueAt DateTime?
+ milestone Boolean @default(false)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ assignee User? @relation(fields:[assigneeId],references:[id],onDelete:SetNull)
+ @@index([projectId,status,dueAt])
+}
+model UserBlock {
+ blockerId String
+ blockedId String
+ createdAt DateTime @default(now())
+ blocker User @relation("Blocker",fields:[blockerId],references:[id],onDelete:Cascade)
+ blocked User @relation("Blocked",fields:[blockedId],references:[id],onDelete:Cascade)
+ @@id([blockerId,blockedId])
+ @@index([blockedId])
+}
+model FollowedCategory {
+ userId String
+ categoryId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ category Category @relation(fields:[categoryId],references:[id],onDelete:Cascade)
+ @@id([userId,categoryId])
+}
+model SavedSearch {
+ id String @id @default(cuid())
+ userId String
+ name String
+ query Json
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([userId,createdAt])
+}
+model PlatformSetting {
+ key String @id
+ value Json
+ updatedAt DateTime @updatedAt
+}
+model LicenseDefinition {
+ key String @id
+ name String
+ text String
+ url String?
+}
+model NotificationPreference {
+ userId String
+ kind String
+ email Boolean @default(true)
+ inApp Boolean @default(true)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([userId,kind])
+}
+model ProjectFollow {
+ userId String
+ projectId String
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@id([userId,projectId])
+}
+model ViewHistory {
+ userId String
+ projectId String
+ viewedAt DateTime @updatedAt
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ project Project @relation(fields:[projectId],references:[id],onDelete:Cascade)
+ @@id([userId,projectId])
+ @@index([userId,viewedAt])
+}

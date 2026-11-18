@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f7f4" />
+    <title>Daybook — Assignment planner</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("daybook-theme");
+        document.documentElement.dataset.theme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <a class="brand" href="#" aria-label="Daybook home">
+          <span class="brand-mark" aria-hidden="true">d.</span>
+          <span>daybook</span>
+        </a>
+
+        <p class="nav-label">Workspace</p>
+        <nav class="primary-nav" aria-label="Views">
+          <button class="nav-item is-active" data-filter="all"><span class="nav-symbol">◷</span>All assignments<span class="nav-count" id="nav-open-count">0</span></button>
+          <button class="nav-item" data-filter="today"><span class="nav-symbol">◉</span>Due today</button>
+          <button class="nav-item" data-filter="week"><span class="nav-symbol">▦</span>This week</button>
+          <button class="nav-item" data-filter="completed"><span class="nav-symbol">✓</span>Completed</button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="week-note">
+            <div class="week-note-top"><span>YOUR WEEK</span><span class="sparkle" aria-hidden="true">✳</span></div>
+            <p id="week-note-copy">A little progress adds up.</p>
+            <div class="week-progress"><span id="week-progress-fill"></span></div>
+            <small id="week-progress-label">0 of 0 assignments done</small>
+          </div>
+          <div class="profile"><span class="avatar">Y</span><span class="profile-name">Your planner<small>Personal workspace</small></span><span class="profile-dots" aria-hidden="true">···</span></div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span aria-hidden="true">/</span><strong>Assignments</strong></div>
+          <div class="topbar-actions"><div class="topbar-date" id="today-label"></div><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false"><span aria-hidden="true">☾</span></button></div>
+        </header>
+
+        <div class="dashboard-grid">
+          <section class="primary-column" aria-labelledby="page-title">
+            <div class="page-heading">
+              <div>
+                <p class="eyebrow" id="greeting">A FRESH START</p>
+                <h1 id="page-title">Your assignments</h1>
+                <p class="page-subtitle">Make room for the work that matters.</p>
+              </div>
+              <button class="button button-primary" id="add-assignment"><span class="plus" aria-hidden="true">+</span> Add assignment</button>
+            </div>
+
+            <section class="focus-banner" aria-label="Study focus">
+              <div class="focus-copy">
+                <span class="focus-kicker"><span class="focus-dot"></span> A MOMENT TO FOCUS</span>
+                <p class="focus-title" id="focus-message">One thing at a time.</p>
+                <p class="focus-description" id="focus-description">Pick a task and give it your attention.</p>
+              </div>
+              <div class="focus-image" role="img" aria-label="A notebook open on a study desk"></div>
+              <div class="focus-index" aria-hidden="true">01 <span>/</span> 03</div>
+            </section>
+
+            <section class="stats-row" aria-label="Assignment overview">
+              <article class="stat-block"><span class="stat-label">IN PROGRESS</span><strong id="stat-open">0</strong><span class="stat-caption">assignments to tackle</span></article>
+              <article class="stat-block stat-today"><span class="stat-label">DUE TODAY</span><strong id="stat-today">0</strong><span class="stat-caption">keep these on your radar</span></article>
+              <article class="stat-block"><span class="stat-label">COMPLETED</span><strong id="stat-completed">0</strong><span class="stat-caption">small wins, adding up</span></article>
+            </section>
+
+            <section class="assignment-section" aria-labelledby="list-heading">
+              <div class="section-heading">
+                <div><h2 id="list-heading">All assignments</h2><span class="section-count" id="list-count">0 items</span></div>
+                <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search assignments" aria-label="Search assignments" /></label>
+              </div>
+              <div class="filter-strip" role="group" aria-label="Filter by priority">
+                <span class="filter-label">PRIORITY</span>
+                <button class="priority-filter is-selected" data-priority="all">All</button>
+                <button class="priority-filter" data-priority="High"><span class="priority-dot high"></span>High</button>
+                <button class="priority-filter" data-priority="Medium"><span class="priority-dot medium"></span>Medium</button>
+                <button class="priority-filter" data-priority="Low"><span class="priority-dot low"></span>Low</button>
+              </div>
+              <div class="assignment-list" id="assignment-list" aria-live="polite"></div>
+            </section>
+          </section>
+
+          <aside class="right-rail" aria-label="Upcoming schedule">
+            <section class="rail-section">
+              <div class="rail-heading"><div><p class="eyebrow">COMING UP</p><h2>Next 7 days</h2></div><span class="calendar-mark" aria-hidden="true">▦</span></div>
+              <div class="heatmap-header">
+                <span class="eyebrow">OPEN DEADLINES</span>
+                <div class="heatmap-month-nav"><button type="button" id="previous-month" aria-label="Previous month">‹</button><h3 id="heatmap-month"></h3><button type="button" id="next-month" aria-label="Next month">›</button></div>
+              </div>
+              <div class="heatmap-weekdays" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="deadline-heatmap" id="deadline-heatmap" role="group" aria-label="Assignment deadline heatmap"></div>
+              <div class="heatmap-legend" aria-label="Fewer to more open deadlines"><span>Less</span><i class="heat-level-0"></i><i class="heat-level-1"></i><i class="heat-level-2"></i><i class="heat-level-3"></i><i class="heat-level-4"></i><span>More</span></div>
+              <div class="upcoming-list" id="upcoming-list"></div>
+              <p class="empty-upcoming" id="empty-upcoming" hidden>Nothing due this week. Enjoy the breathing room.</p>
+            </section>
+            <section class="tip-section">
+              <span class="tip-mark" aria-hidden="true">✳</span>
+              <div><p class="eyebrow">A SMALL REMINDER</p><p class="tip-copy">You don't have to finish everything today. Just start somewhere.</p></div>
+            </section>
+          </aside>
+        </div>
+        <footer class="app-footer"><span>DAYBOOK</span><span>Your time, thoughtfully spent.</span></footer>
+      </main>
+    </div>
+
+    <dialog class="task-dialog" id="task-dialog" aria-labelledby="dialog-title">
+      <form id="task-form">
+        <div class="dialog-heading"><div><p class="eyebrow">YOUR WORK, YOUR PACE</p><h2 id="dialog-title">Add assignment</h2></div><button class="dialog-close" type="button" id="close-dialog" aria-label="Close">×</button></div>
+        <input type="hidden" id="task-id" />
+        <label class="field-label" for="task-title">Assignment name</label>
+        <input class="text-field" id="task-title" name="title" placeholder="e.g. Chapter 4 problem set" required maxlength="100" />
+        <div class="field-row">
+          <div class="field-group"><label class="field-label" for="task-course">Course</label><input class="text-field" id="task-course" name="course" placeholder="e.g. Biology 101" maxlength="60" /></div>
+          <div class="field-group"><label class="field-label" for="task-due">Due date</label><input class="text-field" id="task-due" name="due" type="date" required /></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><label class="field-label" for="task-priority">Priority</label><select class="text-field" id="task-priority" name="priority"><option>Medium</option><option>High</option><option>Low</option></select></div>
+          <div class="field-group"><label class="field-label" for="task-status">Status</label><select class="text-field" id="task-status" name="status"><option value="open">Not started</option><option value="progress">In progress</option><option value="done">Completed</option></select></div>
+        </div>
+        <div class="progress-field"><div class="progress-label-row"><label class="field-label" for="task-progress">Assignment progress</label><output id="task-progress-value" for="task-progress">0%</output></div><input id="task-progress" name="progress" type="range" min="0" max="100" step="5" value="0" /></div>
+        <div class="dialog-actions"><button class="button button-quiet" type="button" id="cancel-dialog">Cancel</button><button class="button button-primary" type="submit" id="save-task">Save assignment</button></div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

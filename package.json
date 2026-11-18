@@ -1,0 +1,62 @@
+{
+  "name": "vic-academy-projecthub",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.19 <23"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "prisma generate && next build",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "prisma generate && tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "postinstall": "prisma generate",
+    "worker:email": "tsx scripts/email-worker.ts",
+    "scanner": "tsx scripts/scan-server.ts",
+    "files:rescan": "tsx scripts/rescan-files.ts",
+    "backup:db": "tsx scripts/backup-database.ts",
+    "maintenance": "tsx scripts/maintenance.ts"
+  },
+  "dependencies": {
+    "next": "15.5.19",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "@prisma/client": "6.19.0",
+    "zod": "4.3.6",
+    "nodemailer": "7.0.13",
+    "@aws-sdk/client-s3": "^3.1000.0",
+    "@aws-sdk/s3-request-presigner": "^3.1000.0",
+    "lucide-react": "0.575.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.3",
+    "@types/node": "^22.0.0",
+    "@types/nodemailer": "^7.0.0",
+    "prisma": "6.19.0",
+    "tsx": "4.21.0",
+    "vitest": "3.2.7",
+    "esbuild": "0.28.2",
+    "@playwright/test": "1.61.1",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "15.5.19",
+    "@eslint/eslintrc": "^3.3.0",
+    "tailwindcss": "3.4.19",
+    "postcss": "^8.5.0",
+    "autoprefixer": "^10.4.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "type": "module"
+}

@@ -1,0 +1,17 @@
+node_modules
+.next
+.env*
+!.env.example
+.data
+playwright-report
+test-results
+coverage
+
+*.tsbuildinfo
+
+# Local catalog intake artifacts
+preview-projects/catalog-version.js
+preview-projects/submission-*/
+preview-projects/.incoming-*/
+ProjectHub Preview.html.*.tmp
+__pycache__/

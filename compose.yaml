@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: projecthub
+      POSTGRES_USER: projecthub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U projecthub -d projecthub"]
+      interval: 5s
+      retries: 10
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports: ["127.0.0.1:1025:1025", "127.0.0.1:8025:8025"]
+  clamav:
+    image: clamav/clamav:stable
+    profiles: ["scan"]
+    ports: ["127.0.0.1:3310:3310"]
+    volumes: ["clamav:/var/lib/clamav"]
+  app:
+    profiles: ["production"]
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://projecthub:${POSTGRES_PASSWORD}@db:5432/projecthub
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      STORAGE_DRIVER: s3
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres:
+  clamav:
