@@ -95,23 +95,24 @@ export function Cover({
 export function ProjectCard({
   project: p,
   reason,
+  exploreQuery,
 }: {
   project: ProjectCardData;
+  exploreQuery?: string;
   reason?: string;
 }) {
   const m = metrics(p);
+  const href = `/projects/${p.id}${exploreQuery !== undefined ? `?${new URLSearchParams({ from: exploreQuery })}` : ""}`;
   return (
     <article className="project-card">
       <Link
-        href={`/projects/${p.id}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={href}
         className="card-cover"
       >
         <Cover kind={p.cover} title={p.title} imageId={p.files[0]?.id} />
         <span className="card-arrow">
           <ArrowUpRight size={18} />
-          <span className="sr-only">Open in new tab</span>
+          <span className="sr-only">Open {p.title}</span>
         </span>
         {p.featured && <span className="featured-badge">✦ Featured</span>}
       </Link>
@@ -126,11 +127,7 @@ export function ProjectCard({
           )}
         </div>
         <h3>
-          <Link
-            href={`/projects/${p.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Link href={href}>
             {p.title}
           </Link>
         </h3>
@@ -199,8 +196,8 @@ export function Empty({
       <BookOpen size={36} />
       <h3>{title}</h3>
       <p>{text}</p>
-      <Link className="button secondary" href="/explore">
-        Explore projects <ArrowRight size={16} />
+      <Link className="button secondary" href="/trending">
+        Browse projects <ArrowRight size={16} />
       </Link>
     </div>
   );

@@ -3,7 +3,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -
 WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma
-RUN npm install
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build

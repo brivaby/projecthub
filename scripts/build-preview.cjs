@@ -1,6 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const root = process.cwd();
+const sourceRoot = path.resolve(process.env.PROJECTHUB_SUBMISSIONS || path.join(root, '..', 'Student Web Projects'));
+const sourcePrefix = path.relative(root, sourceRoot).split(path.sep).map(encodeURIComponent).join('/');
 const fromProject = name => require(path.join(root, 'node_modules', name));
 const esbuild = fromProject('esbuild');
 const submissions = [
@@ -24,7 +26,7 @@ const entrypoints = {
  'assign-time':'index.html',
  'windy-days':'index.html'
 };
-const sourceViews = Object.fromEntries([['assign-time','app.js'],['javris','Main.java']].map(([id,entry])=>[id,fs.readFileSync(path.join(root,'preview-projects',id,entry),'utf8')]));
+const sourceViews = Object.fromEntries([['assign-time','app.js'],['javris','Main.java']].map(([id,entry])=>[id,fs.readFileSync(path.join(root,'preview-projects',id,entry),'utf8').replace('\r\n', '\n').trimEnd()]));
 const manifestPath = process.env.PROJECTHUB_PREVIEW_MANIFEST;
 const incoming = JSON.parse(manifestPath
   ? fs.readFileSync(manifestPath, 'utf8')
@@ -36,7 +38,7 @@ for (const project of incoming) {
   if (project.previewPath) previewPaths[project.card[0]] = project.previewPath;
 }
 const projectModule = `
-const submissions = ${JSON.stringify(submissions.map(row=>[...row, fs.statSync(path.join(root,'..',row[7]), {throwIfNoEntry:false})?.mtime.toISOString()]))};
+const submissions = ${JSON.stringify(submissions.map(row=>[...row, fs.statSync(path.join(sourceRoot,row[7]), {throwIfNoEntry:false})?.mtime.toISOString()]))};
 const entrypoints = ${JSON.stringify(entrypoints)};
 const sourceViews = ${JSON.stringify(sourceViews)};
 const previewPaths = ${JSON.stringify(previewPaths)};
@@ -75,6 +77,7 @@ const ui = fs.readFileSync('src/components/ui.tsx','utf8').replace(
 );
 const modules = {
   '@/components/ui':ui,
+  'next/navigation': 'export const usePathname = () => null;',
   'next/link': `const entries = ${JSON.stringify(entrypoints)};
     const previewPaths = ${JSON.stringify(previewPaths)};
     export default function Link({href, target, rel, ...props}) {
@@ -172,10 +175,10 @@ return renderToStaticMarkup(<><a className="skip-link" href="#main">Skip to cont
 {p.id==='windy-days' && <p>The preview uses stand-in character art and the original gradient background because the image files were absent.</p>}
 {p.id==='javris' && <p>Javris is a Java Swing desktop project. Its source is available below.</p>}
 {p.sourceText && <details><summary>View submitted source</summary><pre className="preview-source"><code>{p.sourceText}</code></pre></details>}
-{p.hasOriginal && <p><a className="button secondary" href={'../'+p.source.split('/').map(encodeURIComponent).join('/')} download={p.source.endsWith('.html') ? undefined : p.source.endsWith('Javris') ? 'Javris.java' : p.id==='trailquiz' ? 'TrailQuiz.zip' : true} target={p.source.endsWith('.html') ? '_blank' : undefined} rel="noopener noreferrer">{p.source.endsWith('.html') ? 'Open submitted page' : 'Download original submission'}</a></p>}</template>)}</>);
+{p.hasOriginal && <p><a className="button secondary" href={${JSON.stringify(sourcePrefix ? sourcePrefix + '/' : './')} + p.source.split('/').map(encodeURIComponent).join('/')} download={p.source.endsWith('.html') ? undefined : p.source.endsWith('Javris') ? 'Javris.java' : p.id==='trailquiz' ? 'TrailQuiz.zip' : true} target={p.source.endsWith('.html') ? '_blank' : undefined} rel="noopener noreferrer">{p.source.endsWith('.html') ? 'Open submitted page' : 'Download original submission'}</a></p>}</template>)}</>);
 }
 `},bundle:true,platform:'node',format:'cjs',jsx:'automatic',outfile:path.join(root,'preview-build.cjs'),write:false,external:['react','react-dom/server'],plugins:[{name:'preview',setup(build){
- build.onResolve({filter:/^(next\/link|@\/)/},args=> Object.hasOwn(modules,args.path)?{path:args.path,namespace:'preview'}:undefined);
+ build.onResolve({filter:/^(next\/(?:link|navigation)|@\/)/},args=> Object.hasOwn(modules,args.path)?{path:args.path,namespace:'preview'}:undefined);
  build.onLoad({filter:/.*/,namespace:'preview'},args=>({contents:modules[args.path],loader:args.path==='@/components/ui'?'tsx':'jsx',resolveDir:root}));
 }}]});
 const Module=require('node:module');

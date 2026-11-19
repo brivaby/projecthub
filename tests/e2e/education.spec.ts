@@ -3,6 +3,10 @@ import { PrismaClient } from "@prisma/client";
 import { randomBytes, createHash } from "node:crypto";
 const db = new PrismaClient();
 const origin = process.env.APP_URL || "http://127.0.0.1:3000";
+const browserOptions = {
+  baseURL: origin,
+  ignoreHTTPSErrors: Boolean(process.env.PROJECTHUB_TEST_TLS_CERT),
+};
 async function authenticated(context: BrowserContext, userId: string) {
   const raw = randomBytes(32).toString("hex");
   await db.session.create({
@@ -61,9 +65,9 @@ test("teachers review student work without exposing private grades or accepting 
       privacyAcceptedAt: now,
     },
   });
-  const teacherContext = await browser.newContext({ baseURL: origin });
-  const studentContext = await browser.newContext({ baseURL: origin });
-  const outsiderContext = await browser.newContext({ baseURL: origin });
+  const teacherContext = await browser.newContext(browserOptions);
+  const studentContext = await browser.newContext(browserOptions);
+  const outsiderContext = await browser.newContext(browserOptions);
   await authenticated(teacherContext, teacher.id);
   await authenticated(studentContext, student.id);
   await authenticated(outsiderContext, outsider.id);

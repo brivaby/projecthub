@@ -5,27 +5,37 @@ import { api } from "./actions";
 export function DiscoveryControls({
   categories,
   query,
+  signedIn,
 }: {
   categories: { id: string; name: string }[];
   query: Record<string, string>;
+  signedIn: boolean;
 }) {
   const [searches, setSearches] = useState<
     { id: string; name: string; query: Record<string, string> }[]
   >([]);
   const [followed, setFollowed] = useState<string[]>([]);
   const [message, setMessage] = useState("");
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   async function refresh() {
+    setLoadState("loading");
     try {
       const data = await api("/api/discovery", "GET");
       setSearches(data.searches);
       setFollowed(
         data.follows.map((f: { categoryId: string }) => f.categoryId),
       );
-    } catch {}
+      setLoadState("ready");
+    } catch {
+      setLoadState("error");
+    }
   }
   useEffect(() => {
-    void refresh();
-  }, []);
+    if (signedIn) void refresh();
+  }, [signedIn]);
+  if (!signedIn) {
+    return <Link href="/login">Sign in to save searches and follow subjects</Link>;
+  }
   return (
     <details className="panel">
       <summary>Saved searches & followed subjects</summary>
@@ -52,9 +62,19 @@ export function DiscoveryControls({
         </label>
         <button className="button small">Save search</button>
       </form>
+      {loadState === "loading" && <p role="status">Loading saved searches…</p>}
+      {loadState === "error" && (
+        <p role="alert">
+          Could not load saved searches.{" "}
+          <button type="button" className="text-button" onClick={() => void refresh()}>
+            Retry
+          </button>
+        </p>
+      )}
+      {loadState === "ready" && searches.length === 0 && <p>No saved searches yet.</p>}
       {searches.map((s) => (
         <div className="file-row" key={s.id}>
-          <Link href={`/explore?${new URLSearchParams(s.query)}`}>
+          <Link href={`/trending?${new URLSearchParams(s.query)}`}>
             {s.name}
           </Link>
           <button
@@ -99,9 +119,6 @@ export function DiscoveryControls({
         ))}
       </div>
       <p role="status">{message}</p>
-      <p className="prose" style={{ fontSize: 11 }}>
-        Sign in to save searches and follow subjects.
-      </p>
     </details>
   );
 }

@@ -35,7 +35,7 @@ export default async function Edit({
         { memberships: { some: { userId: u.id, status: "APPROVED" } } },
       ],
     },
-    select: { id: true, name: true },
+    select: { id: true, name: true, teacherId: true },
   });
   const categories = await db.category.findMany();
   return (
@@ -45,7 +45,9 @@ export default async function Edit({
         Keep your work and your community up to date.
       </p>
       <ProjectForm
-        courses={courses}
+        courses={courses.map(({ id, name, teacherId }) => ({
+          id, name, requiresReview: Boolean(teacherId && teacherId !== u.id && u.role !== "ADMIN"),
+        }))}
         categories={categories.map((c) => c.name)}
         initial={p}
       />

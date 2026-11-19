@@ -34,7 +34,7 @@ export default async function Upload() {
         { memberships: { some: { userId: user.id, status: "APPROVED" } } },
       ],
     },
-    select: { id: true, name: true },
+    select: { id: true, name: true, teacherId: true },
   });
   const categories = await db.category.findMany({ orderBy: { name: "asc" } });
   return (
@@ -49,7 +49,9 @@ export default async function Upload() {
         </p>
       </div>
       <ProjectForm
-        courses={courses}
+        courses={courses.map(({ id, name, teacherId }) => ({
+          id, name, requiresReview: Boolean(teacherId && teacherId !== user.id && user.role !== "ADMIN"),
+        }))}
         categories={categories.map((c) => c.name)}
       />
     </div>

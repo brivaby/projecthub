@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "./actions";
 import { licenses } from "@/lib/validation";
@@ -34,13 +35,15 @@ export type InitialProject = {
   contributors: { name: string; contribution: string }[];
   originalId: string | null;
 };
+type Upload = { id: string; file: File; cover: boolean; state: string; complete?: boolean };
+
 export function ProjectForm({
   categories,
   initial,
   courses = [],
 }: {
   categories: string[];
-  courses?: { id: string; name: string }[];
+  courses?: { id: string; name: string; requiresReview: boolean }[];
   initial?: InitialProject;
 }) {
   const [error, setError] = useState("");
@@ -48,8 +51,86 @@ export function ProjectForm({
   const [progress, setProgress] = useState("");
   const router = useRouter();
   const p = initial;
+  const [savedId, setSavedId] = useState<string>();
+  const [uploads, setUploads] = useState<Upload[]>([]);
+  const [status, setStatus] = useState(
+    p?.status === "PUBLISHED" || p?.status === "PENDING_REVIEW" ? p.status : "DRAFT",
+  );
+  const [visibility, setVisibility] = useState(p?.visibility || "PRIVATE");
+  const [license, setLicense] = useState(p?.license || "All rights reserved");
+  const [course, setCourse] = useState(p?.courseId || "");
+  const [scheduledAt, setScheduledAt] = useState("");
+  const requiresReview = courses.some((option) => option.id === course && option.requiresReview);
+  const reviewRequested = status !== "DRAFT" && (status === "PENDING_REVIEW" || requiresReview);
+  const action = status === "DRAFT" ? "Save draft" : reviewRequested
+    ? "Submit for review" : visibility === "SCHEDULED" ? "Schedule publication" : "Publish";
+  const initialSchedule = p?.scheduledAt;
+
+  useEffect(() => {
+    if (!initialSchedule) return;
+    const date = new Date(initialSchedule);
+    const local = new Date(date.valueOf() - date.getTimezoneOffset() * 60_000);
+    setScheduledAt(local.toISOString().slice(0, 16));
+  }, [initialSchedule]);
+
+  async function uploadFiles(id: string, queue: Upload[]) {
+    const next = queue.map((upload) => ({ ...upload }));
+    const publishState = () => setUploads(next.map((upload) => ({ ...upload })));
+    publishState();
+    for (const upload of next) {
+      if (upload.complete) continue;
+      upload.state = "Uploading";
+      publishState();
+      try {
+        const scanStatus = await new Promise<string>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", `/api/projects/${id}/files`);
+          xhr.responseType = "json";
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              upload.state = `Uploading ${Math.round(event.loaded / event.total * 100)}%`;
+              publishState();
+            }
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.response?.scanStatus);
+            else reject(new Error(xhr.response?.error?.message || "Upload failed"));
+          };
+          xhr.onerror = () => reject(new Error("Upload interrupted"));
+          const data = new FormData();
+          data.set("file", upload.file);
+          data.set("uploadId", upload.id);
+          if (upload.cover) data.set("isCover", "true");
+          xhr.send(data);
+        });
+        upload.complete = true;
+        upload.state = scanStatus === "CLEAN" ? "Scan complete" : "Uploaded, awaiting scan";
+      } catch (error) {
+        upload.state = (error as Error).message;
+      }
+      publishState();
+    }
+    if (next.some((upload) => !upload.complete)) {
+      setError("Your project was saved. Some files could not be uploaded.");
+    } else if (!next.length) {
+      router.push(`/projects/${id}`);
+      router.refresh();
+    }
+  }
+
+  async function retryUploads() {
+    if (!savedId || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      await uploadFiles(savedId, uploads);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (busy || uploads.length > 0) return;
     setBusy(true);
     setError("");
     const f = new FormData(e.currentTarget);
@@ -59,15 +140,20 @@ export function ProjectForm({
         .map((x) => x.trim())
         .filter(Boolean);
     const text = (key: string) => String(f.get(key) || "");
+    if (visibility === "COURSE" && !course) {
+      setError("Select a managed course for course-only visibility.");
+      setBusy(false);
+      return;
+    }
     const links = ["Repository", "Demo", "Documentation", "Video", "External"]
       .filter((k) => text(k))
       .map((kind) => ({ kind, url: text(kind) }));
-    let id = p?.id;
+    const existingId = p?.id;
     try {
       setProgress("Saving project…");
       const result = await api(
-        id ? `/api/projects/${id}` : "/api/projects",
-        id ? "PATCH" : "POST",
+        existingId ? `/api/projects/${existingId}` : "/api/projects",
+        existingId ? "PATCH" : "POST",
         {
           title: text("title"),
           summary: text("summary"),
@@ -114,45 +200,20 @@ export function ProjectForm({
           originalId: p?.originalId || text("originalId") || undefined,
         },
       );
-      id = id || result.id;
+      const id = existingId || result.id;
       const cover = f.get("coverImage");
       const files = [
         ...(cover instanceof File && cover.size ? [cover] : []),
         ...f.getAll("files"),
       ].filter((x) => x instanceof File && x.size > 0) as File[];
-      for (let i = 0; i < files.length; i++) {
-        setProgress(`Uploading ${i + 1} of ${files.length}: ${files[i].name}`);
-        await new Promise<void>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", `/api/projects/${id}/files`);
-          xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable)
-              setProgress(
-                `${files[i].name}: ${Math.round((e.loaded / e.total) * 100)}%`,
-              );
-          };
-          xhr.onload = () =>
-            xhr.status < 300
-              ? resolve()
-              : reject(
-                  new Error(
-                    JSON.parse(xhr.responseText).error?.message ||
-                      "Upload failed",
-                  ),
-                );
-          xhr.onerror = () => reject(new Error("Upload interrupted"));
-          const data = new FormData();
-          data.set("file", files[i]);
-          if (files[i] === cover) data.set("isCover", "true");
-          xhr.send(data);
-        });
-      }
-      router.push(`/projects/${id}`);
-      router.refresh();
+      if (!id) throw new Error("The server did not return a project ID.");
+      setSavedId(id);
+      setProgress("");
+      await uploadFiles(id, files.map((file) => ({
+        id: crypto.randomUUID(), file, cover: file === cover, state: "Waiting",
+      })));
     } catch (e) {
-      setError(
-        `${(e as Error).message}${id ? " Your project is saved. Edit it to retry any failed uploads." : ""}`,
-      );
+      setError((e as Error).message);
     } finally {
       setBusy(false);
       setProgress("");
@@ -160,7 +221,7 @@ export function ProjectForm({
   }
   return (
     <form className="form-card" onSubmit={submit}>
-      <div className="form-grid">
+      <fieldset className="form-grid project-fields" disabled={busy || uploads.length > 0} aria-label="Project details">
         <h2
           className="form-section-title"
           style={{ border: 0, margin: 0, padding: 0 }}
@@ -283,7 +344,8 @@ export function ProjectForm({
           License
           <select
             name="license"
-            defaultValue={p?.license || "All rights reserved"}
+            value={license}
+            onChange={(e) => setLicense(e.target.value)}
           >
             {licenses.map((x) => (
               <option key={x}>{x}</option>
@@ -347,7 +409,7 @@ export function ProjectForm({
         </p>
         <label className="field">
           Managed course
-          <select name="courseId" defaultValue={p?.courseId || ""}>
+          <select name="courseId" value={course} onChange={(e) => setCourse(e.target.value)}>
             <option value="">No managed course</option>
             {courses.map((c) => (
               <option key={c.id} value={c.id}>
@@ -363,11 +425,8 @@ export function ProjectForm({
           Publication status
           <select
             name="status"
-            defaultValue={
-              ["DRAFT", "PENDING_REVIEW", "PUBLISHED"].includes(p?.status || "")
-                ? p?.status
-                : "DRAFT"
-            }
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
           >
             <option value="DRAFT">Draft</option>
             <option value="PENDING_REVIEW">Submit for teacher review</option>
@@ -376,16 +435,15 @@ export function ProjectForm({
             </option>
           </select>
         </label>
-        <label className="field">
+        <label className="field" hidden={visibility !== "SCHEDULED"}>
           Publication time (scheduled visibility)
           <input
             name="scheduledAt"
+            disabled={visibility !== "SCHEDULED"}
+            required={visibility === "SCHEDULED"}
             type="datetime-local"
-            defaultValue={
-              p?.scheduledAt
-                ? new Date(p.scheduledAt).toISOString().slice(0, 16)
-                : ""
-            }
+            value={scheduledAt}
+            onChange={(e) => setScheduledAt(e.target.value)}
           />
         </label>
         <label className="field">
@@ -396,17 +454,20 @@ export function ProjectForm({
             defaultValue={p?.languages.join(", ")}
           />
         </label>
-        <label className="field span-2">
-          Custom license terms (if selected)
+        <label className="field span-2" hidden={license !== "Custom"}>
+          Custom license terms
           <textarea
             name="customLicense"
+            disabled={license !== "Custom"}
+            minLength={20}
+            required={license === "Custom"}
             defaultValue={p?.customLicense}
             maxLength={15000}
           />
         </label>
         <label className="field">
           Visibility
-          <select name="visibility" defaultValue={p?.visibility || "PRIVATE"}>
+          <select name="visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
             <option value="PRIVATE">
               Private — approved collaborators only
             </option>
@@ -498,16 +559,42 @@ export function ProjectForm({
             {label}
           </label>
         ))}
-      </div>
+      </fieldset>
+      <p className="prose">
+        {status === "DRAFT" ? "This project will stay a draft." : "Audience after publication: " + ({
+          PRIVATE: "approved collaborators",
+          UNLISTED: "anyone with the link",
+          PUBLIC: "everyone",
+          INSTITUTION: "verified Vic Academy accounts",
+          COURSE: "approved course members",
+          SCHEDULED: "everyone after the selected time",
+        }[visibility] || visibility) + "."}
+        {reviewRequested && (requiresReview
+          ? " Teacher approval is required." : " This project will be submitted for review.")}
+      </p>
+      {uploads.length > 0 && (
+        <ul aria-label="File upload status" aria-live="polite">
+          {uploads.map((upload) => (
+            <li key={upload.id}>{upload.file.name} · {upload.state}</li>
+          ))}
+        </ul>
+      )}
       {error && (
         <div className="form-error" role="alert">
           {error}
         </div>
       )}
       <div className="form-actions">
-        <button className="button" disabled={busy}>
-          {busy ? "Saving…" : p ? "Save changes" : "Save project"}
-        </button>
+        {uploads.length === 0 ? (
+          <button className="button" disabled={busy}>{busy ? "Saving…" : action}</button>
+        ) : uploads.some((upload) => !upload.complete) && (
+          <button type="button" className="button" disabled={busy} onClick={retryUploads}>Retry failed uploads</button>
+        )}
+        {savedId && uploads.length > 0 && !busy && (
+          <Link className="button secondary" href={error ? `/projects/${savedId}/edit` : `/projects/${savedId}`}>
+            {error ? "Open saved project editor" : "View saved project"}
+          </Link>
+        )}
         <span role="status">{progress}</span>
       </div>
     </form>

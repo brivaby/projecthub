@@ -25,7 +25,7 @@ export default async function Categories() {
         {categories.map((c) => (
           <Link
             key={c.id}
-            href={`/explore?category=${encodeURIComponent(c.name)}`}
+            href={`/trending?category=${encodeURIComponent(c.name)}`}
           >
             <BookOpen />
             <h3>{c.name}</h3>

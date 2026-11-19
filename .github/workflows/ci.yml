@@ -9,7 +9,7 @@ jobs:
         ports: ['1025:1025', '8025:8025']
     env:
       MAILPIT_URL: http://127.0.0.1:8025
-      APP_URL: http://127.0.0.1:3000
+      APP_URL: https://127.0.0.1:3443
       SMTP_HOST: 127.0.0.1
       SMTP_PORT: 1025
     steps:
@@ -33,9 +33,40 @@ jobs:
             sleep 1
           done
           exit 1
-      - run: npm install
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
       - run: npm run db:validate && npm run db:deploy && npm run db:seed
       - run: npm run typecheck && npm run lint && npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium webkit
-      - run: npm run test:e2e
+      - run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - name: Run browser journeys against the production build
+        run: |
+          mkdir -p .next/standalone/public .next/standalone/.next/static
+          cp -R public/. .next/standalone/public/
+          cp -R .next/static/. .next/standalone/.next/static/
+          export PROJECTHUB_TEST_TLS_KEY="$RUNNER_TEMP/projecthub-test-key.pem"
+          export PROJECTHUB_TEST_TLS_CERT="$RUNNER_TEMP/projecthub-test-cert.pem"
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=127.0.0.1" \
+            -addext "subjectAltName=IP:127.0.0.1" -keyout "$PROJECTHUB_TEST_TLS_KEY" -out "$PROJECTHUB_TEST_TLS_CERT"
+          node tests/e2e/https-proxy.mjs &
+          proxy_pid=$!
+          node --import tsx scripts/email-worker.ts > email-worker.log 2>&1 &
+          worker_pid=$!
+          node --import tsx scripts/email-worker.ts > email-worker-2.log 2>&1 &
+          second_worker_pid=$!
+          trap 'kill "$proxy_pid" "$worker_pid" "$second_worker_pid" 2>/dev/null || true' EXIT
+          npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-verification
+          path: |
+            playwright-report
+            test-results
+            email-worker*.log

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavigationLink } from "./navigation-link";
 import { ThemeToggle } from "./theme-toggle";
 import { Layers, Search, Plus, ArrowUpRight, Bell, Menu } from "lucide-react";
 import { auth, signOut } from "@/auth";
@@ -12,6 +13,21 @@ export async function Header() {
       })
     : null;
   const logged = !!user && !user.suspended && !user.deletedAt;
+  const primary = [
+    { href: "/trending", label: "Browse projects" },
+    { href: "/categories", label: "Categories" },
+    { href: "/trending", label: "Trending" },
+    ...(logged ? [{ href: "/courses", label: "My courses" }] : []),
+  ];
+  const account = logged ? [
+    { href: "/dashboard", label: "My workspace" },
+    ...(user.role === "ADMIN" ? [{ href: "/admin", label: "Admin" }] : []),
+  ] : [{ href: "/login", label: "Log in" }];
+  const links = (items: typeof primary, className?: string) => items.map(({ href, label }) => (
+    <NavigationLink key={href} href={href} className={className}>
+      {label}
+    </NavigationLink>
+  ));
   return (
     <header className="site-header">
       <div className="nav-wrap">
@@ -25,40 +41,22 @@ export async function Header() {
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
-          <Link href="/explore">Explore projects</Link>
-          <Link href="/categories">Categories</Link>
-          <Link href="/trending">
-            Trending <span>↗</span>
-          </Link>
-          <Link href="/courses">My courses</Link>
+          {links(primary)}
         </nav>
         <div className="nav-actions">
           <Link
-            href="/explore"
+            href="/trending"
             className="icon-button"
             aria-label="Search projects"
           >
             <Search size={19} />
           </Link>
-          {logged ? (
-            <>
-              <Link
-                href="/notifications"
-                className="icon-button"
-                aria-label="Notifications"
-              >
-                <Bell size={19} />
-              </Link>
-              <Link href="/dashboard" className="nav-login">
-                My workspace
-              </Link>
-              {user.role === "ADMIN" && <Link href="/admin">Admin</Link>}
-            </>
-          ) : (
-            <Link href="/login" className="nav-login">
-              Log in
+          {logged && (
+            <Link href="/notifications" className="icon-button" aria-label="Notifications">
+              <Bell size={19} />
             </Link>
           )}
+          {links(account, "nav-login")}
           <Link href="/upload" className="button small">
             <Plus size={16} />
             Share a project
@@ -67,14 +65,12 @@ export async function Header() {
             <summary aria-label="Open navigation">
               <Menu />
             </summary>
-            <nav>
-              <Link href="/explore">Explore</Link>
-              <Link href="/categories">Categories</Link>
-              <Link href="/trending">Trending</Link>
-              <Link href="/dashboard">My projects</Link>
-              <Link href="/courses">My courses</Link>
-              <Link href="/requests">Requests</Link>
-              <Link href="/settings">Settings</Link>
+            <nav aria-label="Mobile navigation">
+              {links([...primary, ...account])}
+              {logged && links([
+                { href: "/requests", label: "Requests" },
+                { href: "/settings", label: "Settings" },
+              ])}
               {logged && (
                 <form
                   action={async () => {
@@ -104,7 +100,7 @@ export function Footer() {
           <p>Good ideas deserve to go beyond the classroom.</p>
         </div>
         <div>
-          <Link href="/explore">Explore</Link>
+          <Link href="/trending">Browse projects</Link>
           <Link href="/about">About Vic Academy</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>

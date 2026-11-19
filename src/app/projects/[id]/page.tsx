@@ -22,10 +22,14 @@ import {
 import { CommentTools, CollaboratorTools } from "@/components/workspace";
 export default async function Project({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string | string[] }>;
 }) {
   const { id } = await params;
+  const { from } = await searchParams;
+  const exploreHref = typeof from === "string" && from ? `/trending?${new URLSearchParams(from)}` : "/trending";
   const s = await auth();
   const u = s?.user?.id
     ? await db.user.findUnique({ where: { id: s.user.id } })
@@ -128,7 +132,7 @@ export default async function Project({
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span>/</span>
-        <Link href="/explore">Projects</Link>
+        <Link href={exploreHref}>Projects</Link>
         <span>/</span>
         <span>{p.title}</span>
       </nav>
@@ -375,6 +379,14 @@ export default async function Project({
                 </div>
               ))}
             </div>
+            <div className="project-cta">
+              <strong>{p.collaboration !== "CLOSED" ? "Have something to add?" : "Want to follow this idea?"}</strong>
+              <p>
+                {p.collaboration !== "CLOSED"
+                  ? "The creator is open to new collaborators. Start with a question or offer a useful skill."
+                  : "Save this project to keep up with its progress and return when the next version is published."}
+              </p>
+            </div>
             <ProjectActions
               id={id}
               license={p.license}
@@ -471,7 +483,7 @@ export default async function Project({
       </div>
       {related.length > 0 && (
         <section className="section">
-          <SectionTitle title="Keep exploring" href="/explore" />
+          <SectionTitle title="Keep exploring" href={exploreHref} />
           <div className="project-grid">
             {related.map((p) => (
               <ProjectCard key={p.id} project={p} />

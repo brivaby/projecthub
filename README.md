@@ -14,8 +14,7 @@ Next.js application have separate startup instructions.
 python3 scripts/watch-preview.py
 ```
 
-The watcher imports browser-ready submissions from the directory that contains
-`projecthub`. On macOS, you can also open `Watch Student Projects.command`.
+The watcher imports browser-ready submissions from the sibling `Student Web Projects` directory. On macOS, you can also open `Watch Student Projects.command`.
 See [local preview and intake](docs/LOCAL_PREVIEW.md) for supported submissions.
 
 ## Local setup
@@ -38,7 +37,7 @@ npm run db:seed
 npm run dev
 ```
 
-Open **http://127.0.0.1:3000**. Use this canonical hostname consistently with `APP_URL` and `AUTH_URL`; changing to localhost without updating those values will fail CSRF origin checks. Mailpit captures actual SMTP messages at http://127.0.0.1:8025. Register or sign in with an email address, open the message in Mailpit, and follow the single-use link.
+Open **http://127.0.0.1:3000**. Use this hostname consistently with `APP_URL` and `AUTH_URL` so origin checks pass. After registering, open Mailpit at http://127.0.0.1:8025, enter the single-use verification code, then sign in with your password.
 
 In a second terminal, start email delivery with environment variables loaded:
 
@@ -71,13 +70,14 @@ npm run db:deploy
 npm run typecheck
 npm run lint
 npm test
+python3 -m unittest discover -s tests -p 'test_*.py'
 npm run build
 MAILPIT_URL=http://127.0.0.1:8025 npm run test:e2e
 ```
 
 Use a dedicated disposable database for browser tests: they insert sessions and create/delete records. `APP_URL`, the browser base URL, and `TEST_URL` must use the same origin. Playwright fixtures write database sessions only in tests; the application contains no test sign-in endpoint. Install browsers with `npx playwright install chromium webkit`.
 
-After the first successful full install, commit the generated `package-lock.json` and use `npm ci` in CI and Docker. A lockfile could not be generated for all dependencies in the authoring environment. Do not treat the supplied version ranges as a dependency security audit.
+CI and Docker use `npm ci` once the generated `package-lock.json` is committed. A lockfile could not be generated for all dependencies in the authoring environment. Do not treat the supplied version ranges as a dependency security audit.
 
 ## Documentation
 

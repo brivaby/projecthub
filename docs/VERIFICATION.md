@@ -2,7 +2,14 @@
 
 This is a substantial source implementation, **not a certified production-ready release**. No external deployment or production service configuration was performed.
 
-## Checks actually run
+## Latest local verification
+
+- Vitest passed all 150 tests across 12 files.
+- The two offline intake regression tests passed. They exercise scanning, rendering, source links, revision retention, deletion, and recovery after a temporary import failure.
+- Online lockfile generation could not resolve the npm registry. Offline generation also failed because the AWS SDK metadata was absent from the npm cache.
+- Prisma, ESLint, and Playwright are absent from the local install. The production build, real PostgreSQL concurrency assertions, SMTP delivery, and browser checks remain unverified here. The CI workflow runs them with disposable PostgreSQL, Mailpit, Chromium, and WebKit.
+
+## Earlier verification
 
 | Check | Result |
 |---|---|

@@ -18,11 +18,11 @@ import time
 from zipfile import BadZipFile, ZipFile
 
 PROJECT = Path(__file__).resolve().parents[1]
-SUBMISSIONS = PROJECT.parent
+SUBMISSIONS = PROJECT.parent / 'Student Web Projects'
 PREVIEWS = PROJECT / 'preview-projects'
 STATE = PROJECT / '.data' / 'preview'
 EXISTING = {
-    PROJECT.name, 'Ariho Ryan Asiimwe Project', 'Darlene  Mich Project.zip',
+    'Old', 'Ariho Ryan Asiimwe Project', 'Darlene  Mich Project.zip',
     'Elata Eku Dolo Project', 'Elizabeth Tamali Nelima.zip',
     'Isaac  Nsibambi Project.zip', 'Joel  Sherezo Project',
     "Joshua Ndikuwera's Project.zip", 'Julie Veronica Serugo Project',
@@ -106,6 +106,8 @@ def inspect(source):
 
 def snapshot():
     entries = {}
+    if not SUBMISSIONS.exists():
+        return entries
     for source in sorted(SUBMISSIONS.iterdir()):
         if source.name in EXISTING or source.name.startswith('.'):
             continue
@@ -235,12 +237,14 @@ def build(entries, node):
     except (FileNotFoundError, ValueError):
         previous = {}
     projects = {}
+    retry = False
     for source, record in entries.items():
         if not record[1]:
             continue
         try:
             projects[source.name] = build_project(source, record)
         except (BadZipFile, ValueError, OSError, RuntimeError) as error:
+            retry |= isinstance(error, (OSError, RuntimeError))
             if source.name in previous:
                 projects[source.name] = previous[source.name]
             print(f'Could not import {source.name}: {error}', flush=True)
@@ -250,22 +254,45 @@ def build(entries, node):
     pending_path = Path(pending.name)
     try:
         subprocess.run([node, 'scripts/build-preview.cjs'], cwd=PROJECT, check=True,
-                       env={**os.environ, 'PROJECTHUB_PREVIEW_MANIFEST': str(pending_path)})
+                       env={**os.environ, 'PROJECTHUB_PREVIEW_MANIFEST': str(pending_path),
+                            'PROJECTHUB_SUBMISSIONS': str(SUBMISSIONS)})
     finally:
         pending_path.unlink(missing_ok=True)
     write_atomic(manifest, json.dumps(projects, ensure_ascii=True))
     revision = sha256((PROJECT / 'ProjectHub Preview.html').read_bytes()).hexdigest()
     write_atomic(PREVIEWS / 'catalog-version.js',
                  f'window.projectHubCatalogRevision?.("{revision}");\n')
+    retained = {
+        Path(project['previewPath']).parts[:2]
+        for generation in (previous, projects) for project in generation.values()
+    }
+    for directory in PREVIEWS.glob('submission-*'):
+        if directory.is_symlink() or not re.fullmatch(r'submission-[0-9a-f]{16}', directory.name):
+            continue
+        for revision_dir in directory.iterdir():
+            if (not revision_dir.is_symlink() and revision_dir.is_dir()
+                    and re.fullmatch(r'[0-9a-f]{16}', revision_dir.name)
+                    and (revision_dir / '.entry').is_file()
+                    and (directory.name, revision_dir.name) not in retained):
+                try:
+                    shutil.rmtree(revision_dir)
+                except OSError as error:
+                    print(f'Could not prune {revision_dir}: {error}', flush=True)
     print(f'Catalog updated. {len(projects)} automatically discovered submission(s).', flush=True)
+    return not retry
 
 
 def main():
+    global SUBMISSIONS
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--once', action='store_true', help='refresh once and exit')
     parser.add_argument('--interval', type=float, default=2, metavar='SECONDS',
                         help='time between folder checks (default: %(default)s)')
+    parser.add_argument('--submissions', type=Path,
+                        default=Path(os.environ.get('PROJECTHUB_SUBMISSIONS', SUBMISSIONS)),
+                        help='directory containing student submissions')
     args = parser.parse_args()
+    SUBMISSIONS = args.submissions.expanduser().resolve()
     if not math.isfinite(args.interval) or args.interval <= 0:
         parser.error('--interval must be a positive number of seconds')
     node = shutil.which('node')
@@ -277,13 +304,21 @@ def main():
             return
         pending = None
         applied = None
+        retry_at = 0
+        retry_delay = min(args.interval, 60)
         print(f'Watching {SUBMISSIONS}', flush=True)
         while True:
             try:
                 current = snapshot()
-                if current == pending and current != applied:
-                    build(current, node)
-                    applied = current
+                if current != pending:
+                    retry_at = 0
+                    retry_delay = min(args.interval, 60)
+                if current == pending and current != applied and time.monotonic() >= retry_at:
+                    if build(current, node):
+                        applied = current
+                    else:
+                        retry_at = time.monotonic() + retry_delay
+                        retry_delay = min(retry_delay * 2, 60)
                 pending = current
             except (OSError, subprocess.CalledProcessError) as error:
                 print(f'Catalog update failed; retrying: {error}', flush=True)

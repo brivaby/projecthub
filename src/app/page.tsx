@@ -115,7 +115,7 @@ export default async function Home() {
               <br className="desktop-only" /> find your people, and turn a class
               project into something more.
             </p>
-            <form action="/explore" className="hero-search">
+            <form action="/trending" className="hero-search">
               <Search size={20} />
               <input
                 name="q"
@@ -123,7 +123,7 @@ export default async function Home() {
                 placeholder="Search projects, topics, or technologies…"
               />
               <button>
-                Explore projects <ArrowRight size={17} />
+                Browse projects <ArrowRight size={17} />
               </button>
             </form>
             <div className="hero-popular">
@@ -133,7 +133,7 @@ export default async function Home() {
                 "Sustainability",
                 "Web Development",
               ].map((t) => (
-                <Link key={t} href={`/explore?q=${encodeURIComponent(t)}`}>
+                <Link key={t} href={`/trending?q=${encodeURIComponent(t)}`}>
                   {t}
                 </Link>
               ))}
@@ -224,11 +224,46 @@ export default async function Home() {
           <span>For a better tomorrow</span>
         </div>
       </section>
+      <section className="container section journey-section">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">A SIMPLE PATH FROM IDEA TO IMPACT</span>
+            <h2>Make something meaningful of your next idea.</h2>
+          </div>
+          <p>
+            ProjectHub helps Vic Academy students move beyond the deadline —
+            whether you are looking for inspiration, feedback, or a team.
+          </p>
+        </div>
+        <div className="journey-grid">
+          <Link className="journey-card" href="/trending">
+            <span className="journey-number">01</span>
+            <Search size={22} />
+            <h3>Find a spark</h3>
+            <p>Browse real student work by subject, technology, or what is gaining momentum.</p>
+            <span className="journey-link">Browse projects <ArrowRight size={15} /></span>
+          </Link>
+          <Link className="journey-card" href="/upload">
+            <span className="journey-number">02</span>
+            <ArrowUpRight size={22} />
+            <h3>Share your work</h3>
+            <p>Give a class project a home where its process, files, and progress can be discovered.</p>
+            <span className="journey-link">Share a project <ArrowRight size={15} /></span>
+          </Link>
+          <Link className="journey-card" href="/community">
+            <span className="journey-number">03</span>
+            <Globe2 size={22} />
+            <h3>Build together</h3>
+            <p>Meet curious people, start a conversation, and turn a promising idea into a team effort.</p>
+            <span className="journey-link">Meet the community <ArrowRight size={15} /></span>
+          </Link>
+        </div>
+      </section>
       <section className="container section">
         <SectionTitle
           eyebrow="A LITTLE INSPIRATION GOES A LONG WAY"
           title="Worth a closer look"
-          href="/explore?sort=recommended"
+          href="/trending?sort=recommended"
         />
         <div className="project-grid">
           {featured.length
@@ -261,12 +296,12 @@ export default async function Home() {
           </p>
         </div>
         <div className="category-tabs">
-          <Link className="selected" href="/explore">
+            <Link className="selected" href="/trending">
             All projects
           </Link>
           {subjects.slice(0, 5).map((s) => (
             <Link
-              href={`/explore?category=${encodeURIComponent(s.name)}`}
+              href={`/trending?category=${encodeURIComponent(s.name)}`}
               key={s.name}
             >
               <s.icon size={15} />
@@ -290,8 +325,8 @@ export default async function Home() {
           ))}
         </div>
         <div className="center">
-          <Link className="button secondary" href="/explore">
-            Explore all projects <ArrowRight size={17} />
+          <Link className="button secondary" href="/trending">
+            Browse all projects <ArrowRight size={17} />
           </Link>
         </div>
       </section>
@@ -308,14 +343,14 @@ export default async function Home() {
             ["bookmarks", "Most bookmarked"],
             ["rated", "Most endorsed"],
           ].map(([sort, label]) => (
-            <Link key={sort} href={`/explore?sort=${sort}`}>
+            <Link key={sort} href={`/trending?sort=${sort}`}>
               {label} ↗
             </Link>
           ))}
         </div>
         <SectionTitle
           title="Picked for your curiosity"
-          href="/explore?sort=recommended"
+          href="/trending?sort=recommended"
         />
         <div className="project-grid">
           {recommended.projects.slice(0, 3).map((p) => (
@@ -326,7 +361,7 @@ export default async function Home() {
       <section className="container section">
         <SectionTitle
           title="Fresh from the classroom"
-          href="/explore?sort=newest"
+          href="/trending?sort=newest"
         />
         <div className="project-grid">
           {recent.projects.slice(0, 3).map((p) => (
@@ -346,7 +381,7 @@ export default async function Home() {
             {subjects.map((s) => (
               <Link
                 key={s.name}
-                href={`/explore?category=${encodeURIComponent(s.name)}`}
+                href={`/trending?category=${encodeURIComponent(s.name)}`}
               >
                 <s.icon />
                 <h3>{s.name}</h3>

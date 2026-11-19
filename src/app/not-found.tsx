@@ -6,8 +6,8 @@ export default function NotFound() {
         <span className="eyebrow">404 · A LITTLE OFF THE BEATEN PATH</span>
         <h1 className="page-title">This idea isn’t here.</h1>
         <p>The project may be private, unpublished, or no longer available.</p>
-        <Link href="/explore" className="button">
-          Explore other projects →
+        <Link href="/trending" className="button">
+          Browse other projects
         </Link>
       </div>
     </div>

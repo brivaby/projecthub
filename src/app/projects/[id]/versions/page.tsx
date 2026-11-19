@@ -75,7 +75,7 @@ export default async function Versions({
   return (
     <div className="container page">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link href="/explore">Projects</Link>
+        <Link href="/trending">Projects</Link>
         <span>/</span>
         {readable && <Link href={`/projects/${id}`}>{p.title}</Link>}
         <span>/</span>

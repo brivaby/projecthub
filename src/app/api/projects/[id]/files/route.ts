@@ -53,6 +53,14 @@ export const POST = endpoint(async (r, c) => {
   });
   const data = await multipart.formData();
   const isCover = data.get("isCover") === "true";
+  const uploadId = data.get("uploadId");
+  if (uploadId !== null && (
+    typeof uploadId !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(uploadId)
+  )) throw new HttpError(422, "Invalid upload ID");
+  const fileId = uploadId
+    ? createHash("sha256").update(JSON.stringify([id, u.id, uploadId])).digest("hex")
+    : undefined;
   const f = data.get("file");
   if (!(f instanceof File)) throw new HttpError(422, "Select a file");
   let ext;
@@ -70,13 +78,20 @@ export const POST = endpoint(async (r, c) => {
   } catch (e) {
     throw new HttpError(422, (e as Error).message);
   }
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
   const scanStatus = await scan(bytes);
   if (scanStatus === "REJECTED")
     throw new HttpError(422, "File rejected by malware scanner");
   const key = await put(bytes, f.type);
   try {
     const file = await db.$transaction(async (tx) => {
-      await lockedProject(tx,u.id,id,"UPLOAD");
+      await lockedProject(tx, u.id, id, "UPLOAD");
+      const existing = fileId ? await tx.projectFile.findUnique({ where: { id: fileId } }) : null;
+      if (existing) {
+        if (existing.sha256 !== sha256 || existing.name !== f.name || existing.mime !== f.type)
+          throw new HttpError(409, "This upload ID was already used for another file");
+        return existing;
+      }
       const used = await tx.projectFile.aggregate({
         where: { projectId: id },
         _sum: { size: true },
@@ -93,18 +108,23 @@ export const POST = endpoint(async (r, c) => {
         });
       return tx.projectFile.create({
         data: {
+          id: fileId,
           projectId: id,
           name: f.name,
           key,
           mime: f.type,
           size: f.size,
           isCover,
-          sha256: createHash("sha256").update(bytes).digest("hex"),
+          sha256,
           scanStatus,
         },
       });
     });
-    return Response.json({ id: file.id, scanStatus }, { status: 201 });
+    if (file.key !== key) {
+      await remove(key);
+      return Response.json({ id: file.id, scanStatus: file.scanStatus });
+    }
+    return Response.json({ id: file.id, scanStatus: file.scanStatus }, { status: 201 });
   } catch (e) {
     await remove(key);
     throw e;
