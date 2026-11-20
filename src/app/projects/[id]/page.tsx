@@ -354,7 +354,7 @@ export default async function Project({
             </section>
           )}
         </div>
-        <aside>
+        <aside className="project-aside">
           <div className="panel">
             <span className="status">
               {p.archived

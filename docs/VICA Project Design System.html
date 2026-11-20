@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VICA Project Design System</title>
+  <style>
+    :root {
+      --white: #ffffff;
+      --ink: #14293d;
+      --muted: #77808d;
+      --line: #e9e7ed;
+      --blue: #0871b9;
+      --purple: #a22280;
+      --purple-soft: #efdcea;
+      --blue-soft: #e8f1f8;
+      --green: #006838;
+      --orange: #f47735;
+      --yellow: #ffe14f;
+      --lime: #c1d82f;
+      --serif: Georgia, serif;
+      --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--white); color: var(--ink); font: 16px/1.6 var(--sans); }
+    a { color: inherit; }
+    .topbar { background: var(--ink); color: white; padding: 12px 5vw; display: flex; justify-content: space-between; gap: 24px; align-items: center; font-size: 13px; }
+    .topbar a { color: white; text-decoration: none; }
+    .shell { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+    header { padding: 64px 0 52px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 18px; }
+    .brand img { width: 92px; height: auto; }
+    .brand small { display: block; color: var(--purple); font-size: 11px; font-weight: 800; letter-spacing: .18em; }
+    .brand strong { display: block; font-size: 23px; letter-spacing: -.03em; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { max-width: 850px; margin-top: 48px; font-size: clamp(42px, 7vw, 84px); line-height: .98; letter-spacing: -.065em; }
+    h1 em, h2 em { color: var(--purple); font-style: normal; }
+    .lede { max-width: 700px; margin-top: 24px; color: var(--muted); font-size: 19px; }
+    .meta { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill { border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; color: var(--muted); font-size: 12px; }
+    nav { position: sticky; top: 0; z-index: 2; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+    nav .shell { display: flex; gap: 22px; overflow-x: auto; padding-top: 12px; padding-bottom: 12px; }
+    nav a { color: var(--muted); font-size: 13px; text-decoration: none; white-space: nowrap; }
+    nav a:hover { color: var(--purple); }
+    section { padding: 86px 0; border-bottom: 1px solid var(--line); }
+    .section-kicker { color: var(--purple); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    h2 { margin-top: 10px; max-width: 720px; font-size: clamp(30px, 5vw, 58px); line-height: 1.03; letter-spacing: -.05em; }
+    .section-intro { max-width: 680px; margin-top: 18px; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; margin-top: 40px; }
+    .card { grid-column: span 4; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: white; }
+    .card.wide { grid-column: span 6; }
+    .card h3 { font-size: 20px; margin-bottom: 8px; }
+    .card p, .card li { color: var(--muted); font-size: 14px; }
+    .card ul { padding-left: 18px; margin: 12px 0 0; }
+    .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 34px; }
+    .swatch { min-height: 150px; padding: 14px; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 14px; color: white; }
+    .swatch strong { font-size: 14px; }
+    .swatch span { font-size: 12px; opacity: .9; }
+    .white-swatch { color: var(--ink); border: 1px solid var(--line); }
+    .type-sample { padding: 28px; margin-top: 22px; border-left: 4px solid var(--purple); background: var(--purple-soft); }
+    .type-sample .display { font-size: 42px; line-height: 1; letter-spacing: -.05em; }
+    .type-sample .body { margin-top: 12px; color: var(--muted); }
+    .component { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 26px; border-radius: 18px; background: #f7f8fa; border: 1px solid var(--line); }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; padding: 0 18px; background: var(--purple); color: white; font-size: 14px; font-weight: 700; text-decoration: none; }
+    .button.secondary { background: white; color: var(--purple); border: 1px solid var(--purple); }
+    .tag { display: inline-flex; padding: 5px 10px; border-radius: 6px; background: var(--blue-soft); color: var(--blue); font-size: 12px; font-weight: 700; }
+    .project-card { width: min(360px, 100%); overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: white; box-shadow: 0 14px 40px rgba(20,41,61,.08); }
+    .project-cover { height: 140px; padding: 20px; display: flex; align-items: flex-end; color: white; background: linear-gradient(135deg, var(--blue), var(--purple)); }
+    .project-cover strong { font: 27px/1 var(--serif); }
+    .project-body { padding: 20px; }
+    .project-body h3 { margin-top: 12px; }
+    .project-body p { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    .roadmap { counter-reset: roadmap; }
+    .roadmap .card { position: relative; padding-left: 70px; }
+    .roadmap .card:before { counter-increment: roadmap; content: counter(roadmap, decimal-leading-zero); position: absolute; left: 24px; top: 25px; color: var(--purple); font-weight: 800; }
+    .do { border-top: 4px solid var(--green); }
+    .dont { border-top: 4px solid var(--orange); }
+    footer { padding: 46px 0 70px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 760px) {
+      .topbar { align-items: flex-start; flex-direction: column; gap: 4px; }
+      .shell { width: min(100% - 32px, 1180px); }
+      header, section { padding: 54px 0; }
+      .card, .card.wide { grid-column: span 12; }
+      .swatches { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar"><span>VICA ProjectHub · Design artifact</span><a href="../ProjectHub%20Preview.html">Open the current preview ↗</a></div>
+  <header>
+    <div class="shell">
+      <div class="brand">
+        <img src="https://www.vicacademy.org/wp-content/uploads/2023/09/vine-logo-main-300x116.png" alt="Vine International Christian Academy logo">
+        <div><small>VINE INTERNATIONAL CHRISTIAN ACADEMY</small><strong>Projects, shared well.</strong></div>
+      </div>
+      <h1>A visual system for <em>curious work</em>.</h1>
+      <p class="lede">A practical design artifact for VICA projects today and the products, showcases, and learning spaces we build next.</p>
+      <div class="meta"><span class="pill">Version 1.0</span><span class="pill">Light-first</span><span class="pill">Web + print ready</span><span class="pill">Based on VICA Brand Identity Guidelines, 2016</span></div>
+    </div>
+  </header>
+  <nav><div class="shell"><a href="#principles">Principles</a><a href="#colors">Colors</a><a href="#type">Typography</a><a href="#components">Components</a><a href="#now">Now</a><a href="#future">Future</a></div></nav>
+
+  <main>
+    <section id="principles"><div class="shell"><span class="section-kicker">01 · Foundation</span><h2>Make the work feel <em>welcomed</em>.</h2><p class="section-intro">VICA’s identity is confident, open, energetic, and grounded. Project experiences should make student work easy to discover without making the student disappear behind the interface.</p><div class="grid"><article class="card"><h3>Clear before clever</h3><p>Use strong hierarchy, generous space, and plain language so a visitor understands the work, owner, subject, and next action quickly.</p></article><article class="card"><h3>People in the picture</h3><p>Show the maker, collaborators, process, and context. Future photography should feel spontaneous, energetic, high-contrast, and story-led.</p></article><article class="card"><h3>Accent with purpose</h3><p>Keep the page calm and white. Reserve purple, blue, and green for moments that guide attention or signal meaning.</p></article></div></div></section>
+
+    <section id="colors"><div class="shell"><span class="section-kicker">02 · Color system</span><h2>White is the <em>stage</em>.</h2><p class="section-intro">The brand guide says the VICA logo should appear against white. Purple and blue are the primary digital accents; complementary colors bring energy to campaigns, categories, and future showcases.</p><div class="swatches"><div class="swatch white-swatch"><strong>White</strong><span>#FFFFFF · canvas</span></div><div class="swatch" style="background:#A22280"><strong>VICA Purple</strong><span>#A22280 · primary action</span></div><div class="swatch" style="background:#0871B9"><strong>VICA Blue</strong><span>#0871B9 · links and trust</span></div><div class="swatch" style="background:#006838"><strong>Washed Green</strong><span>#006838 · deliberate accent</span></div><div class="swatch" style="background:#F47735"><strong>Orange</strong><span>#F47735 · energy</span></div><div class="swatch" style="background:#C1D82F;color:#14293d"><strong>Lime</strong><span>#C1D82F · discovery</span></div><div class="swatch" style="background:#FFE14F;color:#14293d"><strong>Yellow</strong><span>#FFE14F · highlight</span></div><div class="swatch" style="background:#14293D"><strong>Ink Navy</strong><span>#14293D · text</span></div></div></div></section>
+
+    <section id="type"><div class="shell"><span class="section-kicker">03 · Typography</span><h2>Readable, modern, <em>human</em>.</h2><p class="section-intro">The guide names Colaborate for copy and Helvetica Neue for the logotype. On the web, use a close sans-serif fallback stack and preserve the same contrast between expressive headlines and calm body copy.</p><div class="type-sample"><div class="display">Classroom ideas. Real-world possibilities.</div><p class="body">Use a confident display style for project titles, then keep descriptions short, direct, and easy to scan. Never use typography to imitate or recreate the VICA logo.</p></div><div class="grid"><article class="card"><h3>Display</h3><p>Large, tight, expressive headlines. Use for landing pages, project titles, and showcase openings.</p></article><article class="card"><h3>Body</h3><p>Neutral sans-serif at 16px or above for long reading, project summaries, and learning guidance.</p></article><article class="card"><h3>Metadata</h3><p>Small but never faint: dates, subjects, technologies, and status should remain readable and useful.</p></article></div></div></section>
+
+    <section id="components"><div class="shell"><span class="section-kicker">04 · Interface kit</span><h2>Small patterns, <em>consistent signals</em>.</h2><p class="section-intro">These are the reusable building blocks for ProjectHub, future class showcases, and VICA digital products.</p><div class="grid"><article class="card wide"><h3>Actions and tags</h3><div class="component"><a class="button" href="#now">Share a project</a><a class="button secondary" href="#future">See the roadmap</a><span class="tag">Environmental Science</span><span class="tag">JavaScript</span></div></article><article class="card wide"><h3>Project card</h3><div class="project-card"><div class="project-cover"><strong>Small ideas.<br>Lasting impact.</strong></div><div class="project-body"><span class="tag">Education</span><h3>TrailQuiz</h3><p>An interactive learning dashboard with quizzes and progress tracking.</p></div></div></article></div></div></section>
+
+    <section id="now"><div class="shell"><span class="section-kicker">05 · Apply now</span><h2>Make today’s ProjectHub feel <em>VICA</em>.</h2><p class="section-intro">The current implementation should prioritize clarity, ownership, and safe exploration while staying faithful to the brand guide.</p><div class="grid"><article class="card do"><h3>Do</h3><ul><li>Keep the default canvas white.</li><li>Use the official logo without recoloring, rotating, skewing, or recreating it.</li><li>Use purple for primary actions and blue for supporting links.</li><li>Keep student work and authors visible together.</li><li>Maintain generous logo clear space.</li></ul></article><article class="card dont"><h3>Don’t</h3><ul><li>Use a green page-wide wash as the default theme.</li><li>Turn the VICA mark into a decorative icon or avatar.</li><li>Use low-contrast gray metadata.</li><li>Overload project cards with badges and controls.</li><li>Use imagery that feels staged or disconnected from the story.</li></ul></article><article class="card wide"><h3>Current implementation checklist</h3><ul><li>White default background and VICA palette tokens in <code>src/app/globals.css</code>.</li><li>Official logo URL used in the site shell and preview.</li><li>Project discovery routed through Trending after Explore’s removal.</li><li>Journey, collaboration, and browse-intent patterns included on the homepage.</li></ul></article></div></div></section>
+
+    <section id="future"><div class="shell"><span class="section-kicker">06 · Build forward</span><h2>A system that grows with the <em>school</em>.</h2><p class="section-intro">Treat this artifact as a living contract. New features should extend the same signals rather than invent a new visual language each time.</p><div class="grid roadmap"><article class="card wide"><h3>Student portfolio mode</h3><p>Let students assemble a curated body of work with a strong cover story, process timeline, and shareable profile.</p></article><article class="card wide"><h3>Class showcase templates</h3><p>Offer teachers a repeatable layout for end-of-term exhibitions, with subject color variations that remain within the palette.</p></article><article class="card wide"><h3>Impact stories</h3><p>Pair project outcomes with photography and short quotes so the work communicates its human story without excess copy.</p></article><article class="card wide"><h3>Brand-safe theming</h3><p>Expose approved color tokens to future tools, emails, dashboards, and public pages so every new surface starts in the right place.</p></article></div></div></section>
+  </main>
+  <footer><div class="shell"><strong>VICA Project Design System</strong><br>Prepared for current ProjectHub work and future student showcases. Source: VICA Brand Identity Guidelines, March 2016.</div></footer>
+</body>
+</html>

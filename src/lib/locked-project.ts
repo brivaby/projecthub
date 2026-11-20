@@ -12,7 +12,7 @@ export async function lockedProject(tx:Prisma.TransactionClient,userId:string,pr
  const owner=await canManageProject(user,project,tx);
  if(scope==='OWNER'&&!owner)throw new HttpError(403,'Project ownership required');
  if(scope==='UPLOAD'){
-  if(!verifiedVic(user))throw new HttpError(403,'Only verified Vic Academy accounts may upload project files');
+  if(!verifiedVic(user))throw new HttpError(403,'Only verified Vine Iternational Christian Academy accounts may upload project files');
   if(project.deletedAt||project.archived||['SUSPENDED','REMOVED','DELETED'].includes(project.status))throw new HttpError(409,'Project unavailable for uploads');
   if(!owner){await assertWorkspaceAccess(user,project,tx);const member=await tx.collaborator.findUnique({where:{projectId_userId:{projectId,userId}}});if(!member||!['CONTRIBUTOR','EDITOR','MANAGER'].includes(member.permission))throw new HttpError(403,'Contributor access is required');}
  }

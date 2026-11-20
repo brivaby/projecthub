@@ -125,7 +125,7 @@ export function SettingsForm({ user }: { user: Settings }) {
           {(
             [
               ["showInstitution", "Show my institution on my public profile"],
-              ["showDomainBadge", "Show my verified Vic Academy badge"],
+              ["showDomainBadge", "Show my verified Vine Iternational Christian Academy badge"],
               [
                 "showCollaborations",
                 "Display my approved public collaborations",

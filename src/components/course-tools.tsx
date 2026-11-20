@@ -40,7 +40,7 @@ export function CreateCourse() {
           <input
             name="institution"
             required
-            defaultValue="Vic Academy"
+      defaultValue="Vine Iternational Christian Academy"
             maxLength={160}
           />
         </label>
@@ -85,7 +85,7 @@ export function JoinCourse() {
       <h2>Join your class</h2>
       <p className="page-subtitle" style={{ fontSize: 12 }}>
         Enter the course ID provided by your teacher. Enrollment requires a
-        verified Vic Academy email.
+        verified Vine Iternational Christian Academy email.
       </p>
       <label className="field">
         Course ID
@@ -300,7 +300,7 @@ export function CourseWorkspace({ courseId }: { courseId: string }) {
           >
             <div className="form-grid">
               <label className="field">
-                Invite verified Vic Academy email
+                Invite verified Vine Iternational Christian Academy email
                 <input name="email" type="email" required />
               </label>
               <label className="field">

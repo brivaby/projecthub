@@ -181,13 +181,13 @@ export function OwnershipProposal({
     >
       <h2>Shared ownership</h2>
       <p className="page-subtitle">
-        Invite an eligible verified Vic Academy co-owner. A primary ownership
+        Invite an eligible verified Vine Iternational Christian Academy co-owner. A primary ownership
         transfer requires both parties to confirm; existing owners retain
         attribution and shared ownership.
       </p>
       <div className="form-grid">
         <label className="field">
-          Vic Academy account email
+        Vine Iternational Christian Academy account email
           <input name="email" type="email" required maxLength={254} />
         </label>
         <label className="field">
@@ -222,7 +222,7 @@ export function OwnershipDecision({
     if (
       action === "ACCEPT" &&
       !confirm(
-        "Accept this ownership responsibility? Your current verified Vic Academy account will be recorded as a project owner.",
+        "Accept this ownership responsibility? Your current verified Vine Iternational Christian Academy account will be recorded as a project owner.",
       )
     )
       return;

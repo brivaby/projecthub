@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { actor } from "@/lib/security";
 import { db } from "@/lib/db";
 import { CreateCourse, JoinCourse } from "@/components/course-tools";
-export const metadata = { title: "My courses · Vic Academy ProjectHub" };
+export const metadata = { title: "My courses · Vine Iternational Christian Academy ProjectHub" };
 export default async function Courses() {
   let user;
   try {
@@ -63,7 +63,7 @@ export default async function Courses() {
       </div>
       {!courses.length && (
         <p className="prose" style={{ marginBottom: 30 }}>
-          No courses yet. Your teacher can invite your verified Vic Academy
+          No courses yet. Your teacher can invite your verified Vine Iternational Christian Academy
           account.
         </p>
       )}

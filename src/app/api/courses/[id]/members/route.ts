@@ -26,7 +26,7 @@ export const POST = endpoint(async (r, c) => {
     if (!verifiedVic(u))
       throw new HttpError(
         403,
-        "Course enrollment requires a verified Vic Academy email account",
+        "Course enrollment requires a verified Vine Iternational Christian Academy email account",
       );
     const course = await db.course.findFirst({
       where: { id, archived: false },
@@ -119,7 +119,7 @@ export const POST = endpoint(async (r, c) => {
   if (v.action === "APPROVE" && !verifiedVic(membership.user))
     throw new HttpError(
       403,
-      "A verified Vic Academy email account is required",
+      "A verified Vine Iternational Christian Academy email account is required",
     );
   await db.$transaction(async (tx) => {
     if (v.action === "REMOVE") {

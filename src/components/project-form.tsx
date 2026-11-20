@@ -404,7 +404,7 @@ export function ProjectForm({
         )}
         <h2 className="form-section-title">Sharing & permissions</h2>
         <p className="warning span-2">
-          Collaboration is currently limited to verified Vic Academy email
+          Collaboration is currently limited to verified Vine Iternational Christian Academy email
           accounts.
         </p>
         <label className="field">
@@ -474,7 +474,7 @@ export function ProjectForm({
             <option value="UNLISTED">Unlisted — anyone with the link</option>
             <option value="PUBLIC">Public — discoverable by everyone</option>
             <option value="INSTITUTION">
-              Vic Academy verified accounts only
+              Vine Iternational Christian Academy verified accounts only
             </option>
             <option value="COURSE">Approved course members only</option>
             <option value="SCHEDULED">
@@ -501,7 +501,7 @@ export function ProjectForm({
           >
             <option value="MODERATED">Owner approval required</option>
             <option value="OPEN">All authenticated accounts</option>
-            <option value="VIC_ONLY">Verified Vic Academy accounts</option>
+            <option value="VIC_ONLY">Verified Vine Iternational Christian Academy accounts</option>
             <option value="DISABLED">Disabled</option>
           </select>
         </label>
@@ -565,7 +565,7 @@ export function ProjectForm({
           PRIVATE: "approved collaborators",
           UNLISTED: "anyone with the link",
           PUBLIC: "everyone",
-          INSTITUTION: "verified Vic Academy accounts",
+          INSTITUTION: "verified Vine Iternational Christian Academy accounts",
           COURSE: "approved course members",
           SCHEDULED: "everyone after the selected time",
         }[visibility] || visibility) + "."}

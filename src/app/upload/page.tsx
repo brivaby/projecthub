@@ -15,7 +15,7 @@ export default async function Upload() {
   if (!verifiedVic(user))
     return (
       <div className="container page">
-        <h1 className="page-title">A home for Vic Academy projects.</h1>
+        <h1 className="page-title">A home for Vine Iternational Christian Academy projects.</h1>
         <p className="page-subtitle">
           Publishing is available to verified @vicacademy.org accounts. You can
           still discover, endorse, bookmark, comment on, and request to clone

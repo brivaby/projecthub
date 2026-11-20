@@ -12,7 +12,7 @@ export async function projectWrite(
   if (!verifiedVic(user))
     throw new HttpError(
       403,
-      "Only verified Vic Academy accounts may publish academic projects.",
+      "Only verified Vine Iternational Christian Academy accounts may publish academic projects.",
     );
   const institution = await tx.institution.upsert({
     where: { name: v.institution.trim() },

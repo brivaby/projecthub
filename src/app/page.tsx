@@ -96,6 +96,13 @@ export default async function Home() {
       },
     }),
   ]);
+  const mostVisited = [...data.projects]
+    .sort((a, b) => b._count.views - a._count.views)
+    .slice(0, 3);
+  const recordedVisits = data.projects.reduce(
+    (total, project) => total + project._count.views,
+    0,
+  );
   return (
     <>
       <section className="hero">
@@ -103,7 +110,7 @@ export default async function Home() {
           <div className="hero-copy">
             <div className="hero-pill">
               <span />
-              THE VIC ACADEMY PROJECT SHOWCASE <ArrowUpRight size={14} />
+              THE VINE ITERNATIONAL CHRISTIAN ACADEMY PROJECT SHOWCASE <ArrowUpRight size={14} />
             </div>
             <h1>
               Classroom ideas.
@@ -111,7 +118,7 @@ export default async function Home() {
               <em>Real-world possibilities.</em>
             </h1>
             <p>
-              Discover what Vic Academy students are building. Share your work,
+              Discover what Vine Iternational Christian Academy students are building. Share your work,
               <br className="desktop-only" /> find your people, and turn a class
               project into something more.
             </p>
@@ -145,7 +152,7 @@ export default async function Home() {
                 ))}
               </div>
               <span>
-                The Vic Academy community.
+                The Vine Iternational Christian Academy community.
                 <br />
                 <strong>{count} projects. Countless possibilities.</strong>
               </span>
@@ -200,7 +207,7 @@ export default async function Home() {
               <span>
                 Different disciplines.
                 <br />
-                <strong>One Vic Academy community.</strong>
+                <strong>One Vine Iternational Christian Academy community.</strong>
               </span>
             </div>
             <div className="visual-sticker">
@@ -214,7 +221,7 @@ export default async function Home() {
       </section>
       <section className="trust-strip">
         <div className="container">
-          <span>BIG IDEAS START AT VIC ACADEMY</span>
+              <span>BIG IDEAS START AT VINE ITERNATIONAL CHRISTIAN ACADEMY</span>
           <span>For students</span>
           <i>✦</i>
           <span>For educators</span>
@@ -231,7 +238,7 @@ export default async function Home() {
             <h2>Make something meaningful of your next idea.</h2>
           </div>
           <p>
-            ProjectHub helps Vic Academy students move beyond the deadline —
+            ProjectHub helps Vine Iternational Christian Academy students move beyond the deadline —
             whether you are looking for inspiration, feedback, or a team.
           </p>
         </div>
@@ -257,6 +264,52 @@ export default async function Home() {
             <p>Meet curious people, start a conversation, and turn a promising idea into a team effort.</p>
             <span className="journey-link">Meet the community <ArrowRight size={15} /></span>
           </Link>
+        </div>
+      </section>
+      <section className="container section activity-section">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">PROJECTHUB IN MOTION</span>
+            <h2>See what’s getting attention.</h2>
+          </div>
+          <p>
+            A quick pulse check on the ideas our community is exploring right now.
+            <br />
+            Detailed activity insights are available to administrators.
+          </p>
+        </div>
+        <div className="activity-layout">
+          <div className="activity-stats">
+            <div>
+              <strong>{recordedVisits.toLocaleString()}</strong>
+              <span>Recorded visits</span>
+            </div>
+            <div>
+              <strong>{count.toLocaleString()}</strong>
+              <span>Published projects</span>
+            </div>
+            <div>
+              <strong>{creators.length.toLocaleString()}</strong>
+              <span>Featured creators</span>
+            </div>
+          </div>
+          <div className="activity-top">
+            <span className="eyebrow">MOST VISITED PROJECTS</span>
+            {mostVisited.length ? (
+              mostVisited.map((project, index) => (
+                <Link className="activity-row" href={`/projects/${project.id}`} key={project.id}>
+                  <span>0{index + 1}</span>
+                  <span>
+                    <strong>{project.title}</strong>
+                    <small>{project._count.views.toLocaleString()} recorded visits</small>
+                  </span>
+                  <ArrowRight size={15} />
+                </Link>
+              ))
+            ) : (
+              <p className="activity-empty">No visits recorded yet. Be the first to explore a project.</p>
+            )}
+          </div>
         </div>
       </section>
       <section className="container section">

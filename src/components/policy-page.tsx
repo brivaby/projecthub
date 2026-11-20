@@ -11,7 +11,7 @@ export function PolicyPage({
   return (
     <div className="container page policy-body">
       <span className="eyebrow">
-        VIC ACADEMY PROJECTHUB · POLICY VERSION 2026-11-17
+        VINE ITERNATIONAL CHRISTIAN ACADEMY PROJECTHUB · POLICY VERSION 2026-11-17
       </span>
       <h1 className="page-title">{title}</h1>
       <p className="page-subtitle">{intro}</p>

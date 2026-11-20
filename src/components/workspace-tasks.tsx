@@ -66,7 +66,7 @@ export function WorkspaceTasks({ projectId }: { projectId: string }) {
     <section className="panel">
       <h2>Tasks & milestones</h2>
       <p className="page-subtitle" style={{ fontSize: 12 }}>
-        Visible only to approved, eligible Vic Academy collaborators.
+        Visible only to approved, eligible Vine Iternational Christian Academy collaborators.
         Contributors and project owners can make changes.
       </p>
       {loading && <p role="status">Loading workspace tasks…</p>}

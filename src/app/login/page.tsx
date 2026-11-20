@@ -1,5 +1,5 @@
 import { AccountForm } from "@/components/account-form";
-export const metadata = { title: "Sign in to Vic Academy ProjectHub" };
+export const metadata = { title: "Sign in to Vine Iternational Christian Academy ProjectHub" };
 export default async function Login({
   searchParams,
 }: {
@@ -9,7 +9,7 @@ export default async function Login({
   return (
     <div className="container page">
       <div className="panel" style={{ maxWidth: 500, margin: "25px auto" }}>
-        <span className="eyebrow">VIC ACADEMY PROJECTHUB</span>
+        <span className="eyebrow">VINE ITERNATIONAL CHRISTIAN ACADEMY PROJECTHUB</span>
         <h1 className="page-title">Welcome back.</h1>
         <p className="page-subtitle">
           Sign in with your verified email and password.

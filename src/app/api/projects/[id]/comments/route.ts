@@ -38,7 +38,7 @@ export const POST = endpoint(async (r, c) => {
   if (project.commentPolicy === "VIC_ONLY" && !verifiedVic(user))
     throw new HttpError(
       403,
-      "Comments on this project require a verified Vic Academy email account",
+      "Comments on this project require a verified Vine Iternational Christian Academy email account",
     );
   if (input.parentId) {
     const parent = await db.comment.findFirst({

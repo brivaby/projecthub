@@ -365,7 +365,7 @@ export function AccountSecurity() {
       <section className="panel">
         <h2>Collaboration rules</h2>
         <p className="page-subtitle">
-          Collaboration is currently limited to verified Vic Academy email
+          Collaboration is currently limited to verified Vine Iternational Christian Academy email
           accounts. Collaborators must respect attribution, keep private
           materials confidential, communicate respectfully, and never use
           another student’s work as their own.

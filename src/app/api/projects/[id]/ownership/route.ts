@@ -66,7 +66,7 @@ export const POST = endpoint(async (r, c) => {
   if (!target || target.id === u.id)
     throw new HttpError(
       422,
-      "Choose another eligible verified Vic Academy account",
+      "Choose another eligible verified Vine Iternational Christian Academy account",
     );
   await assertCollaborationEligible(target);
   const block = await db.userBlock.findFirst({

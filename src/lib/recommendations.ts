@@ -87,7 +87,7 @@ export async function recommendations(userId?: string) {
       data.projects.map((p) => [
         p.id,
         p.collaboration !== "CLOSED"
-          ? "Vic Academy project seeking collaborators."
+          ? "Vine Iternational Christian Academy project seeking collaborators."
           : p.technologies.some((t) => savedTools.has(t))
             ? "Similar to projects you bookmarked."
             : p.technologies.some((t) => viewedTools.has(t))

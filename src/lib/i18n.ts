@@ -26,7 +26,7 @@ export function formatDateTime(
 export const messages = {
   en: {
     collaborationRestricted:
-      "Collaboration is currently limited to verified Vic Academy email accounts.",
+      "Collaboration is currently limited to verified Vine Iternational Christian Academy email accounts.",
     invalidForm: "Please check the form fields.",
     saved: "Your changes have been saved.",
   },

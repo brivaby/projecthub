@@ -24,8 +24,8 @@ async function main() {
   for (const name of categories)
     await db.category.upsert({ where: { name }, create: { name }, update: {} });
   const institution = await db.institution.upsert({
-    where: { name: "Vic Academy" },
-    create: { name: "Vic Academy" },
+    where: { name: "Vine Iternational Christian Academy" },
+    create: { name: "Vine Iternational Christian Academy" },
     update: {},
   });
   const people = [
@@ -117,7 +117,7 @@ async function main() {
         ...identity,
         profile: {
           create: {
-            institution: "Vic Academy",
+            institution: "Vine Iternational Christian Academy",
             bio: "Fictional development account. No real personal data.",
             interests: person.skills,
             skills: person.skills,
@@ -137,7 +137,7 @@ async function main() {
         profile: {
           upsert: {
             create: {
-              institution: "Vic Academy",
+              institution: "Vine Iternational Christian Academy",
               bio: "Fictional development account.",
               interests: person.skills,
               skills: person.skills,
@@ -146,7 +146,7 @@ async function main() {
               public: true,
             },
             update: {
-              institution: "Vic Academy",
+              institution: "Vine Iternational Christian Academy",
               showInstitution: true,
               showInRankings: true,
             },
@@ -247,7 +247,7 @@ async function main() {
     [
       "accessible-campus",
       "A campus that works for everyone",
-      "Mapping accessible routes so every student can feel at home on the Vic Academy campus.",
+      "Mapping accessible routes so every student can feel at home on the Vine Iternational Christian Academy campus.",
       "Design & Arts",
       "dev-sarah",
       "clay",
@@ -348,7 +348,7 @@ async function main() {
     const category = await db.category.findUniqueOrThrow({
       where: { name: subject },
     });
-    const description = `${summary}\n\nThe challenge\nOur team began with a practical question: how can student research make everyday life a little better? We reviewed published methods, collected consent-based feedback, and built a small prototype to test our assumptions.\n\nOur approach\nWe documented the development process and evaluated each iteration with our class. Third-party resources are credited in the project documentation.\n\nWhat we learned\nUseful results came from listening carefully, testing early, and keeping the work accessible.\n\nWhat comes next\nWe welcome eligible Vic Academy collaborators interested in a careful pilot and improved documentation.`;
+    const description = `${summary}\n\nThe challenge\nOur team began with a practical question: how can student research make everyday life a little better? We reviewed published methods, collected consent-based feedback, and built a small prototype to test our assumptions.\n\nOur approach\nWe documented the development process and evaluated each iteration with our class. Third-party resources are credited in the project documentation.\n\nWhat we learned\nUseful results came from listening carefully, testing early, and keeping the work accessible.\n\nWhat comes next\nWe welcome eligible Vine Iternational Christian Academy collaborators interested in a careful pilot and improved documentation.`;
     const data = {
       title,
       summary,
@@ -451,7 +451,7 @@ async function main() {
           label: "1.0.0",
           title: "Class showcase release",
           notes:
-            "Initial documented version prepared for the Vic Academy class showcase.",
+            "Initial documented version prepared for the Vine Iternational Christian Academy class showcase.",
           authorId: ownerId,
           status: "PUBLISHED",
           publishedAt: now,
@@ -531,7 +531,7 @@ async function main() {
       id: "dev-welcome",
       userId: "dev-amara",
       title:
-        "Welcome to Vic Academy ProjectHub. Your next collaboration starts here.",
+        "Welcome to Vine Iternational Christian Academy ProjectHub. Your next collaboration starts here.",
       href: "/requests",
     },
     update: {},
@@ -578,7 +578,7 @@ async function main() {
     create: {
       id: "dev-showcase",
       courseId: course.id,
-      title: "Vic Academy Capstone Showcase",
+      title: "Vine Iternational Christian Academy Capstone Showcase",
       public: true,
     },
     update: {},

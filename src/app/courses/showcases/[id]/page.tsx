@@ -29,7 +29,7 @@ export default async function Showcase({
   if (!collection) notFound();
   return (
     <div className="container page">
-      <span className="eyebrow">VIC ACADEMY CLASS SHOWCASE</span>
+      <span className="eyebrow">VINE ITERNATIONAL CHRISTIAN ACADEMY CLASS SHOWCASE</span>
       <h1 className="page-title">{collection.title}</h1>
       <p className="page-subtitle">
         Public projects from {collection.course.name}. Private grades and

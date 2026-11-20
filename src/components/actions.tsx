@@ -77,7 +77,7 @@ export function ProjectActions({
     }
     if (type === "COLLABORATION" && !collaborationEligible) {
       setToast(
-        "Collaboration is currently limited to verified Vic Academy email accounts. Accept collaboration rules in account settings.",
+        "Collaboration is currently limited to verified Vine Iternational Christian Academy email accounts. Accept collaboration rules in account settings.",
       );
       return;
     }

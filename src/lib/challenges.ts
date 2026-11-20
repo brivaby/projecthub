@@ -45,9 +45,9 @@ export async function enqueueChallenge(
   });
   const title =
     purpose === "VERIFY"
-      ? "Verify your Vic Academy ProjectHub account"
+      ? "Verify your Vine Iternational Christian Academy ProjectHub account"
       : purpose === "RESET"
-        ? "Reset your Vic Academy ProjectHub password"
+        ? "Reset your Vine Iternational Christian Academy ProjectHub password"
         : "Confirm your new email address";
   await tx.emailEvent.create({
     data: {

@@ -42,13 +42,14 @@ const submissions = ${JSON.stringify(submissions.map(row=>[...row, fs.statSync(p
 const entrypoints = ${JSON.stringify(entrypoints)};
 const sourceViews = ${JSON.stringify(sourceViews)};
 const previewPaths = ${JSON.stringify(previewPaths)};
-export const projects = submissions.map(([id,title,summary,category,name,cover,technologies,source,updatedAt])=>({
+export const projects = submissions.map(([id,title,summary,category,name,cover,technologies,source,updatedAt], index)=>({
   id,title,summary,category:{name:category}, owner:{id:encodeURIComponent(name.toLowerCase().replaceAll(' ','-')),name}, cover,technologies,source,
   entry:entrypoints[id], previewPath:previewPaths[id] || (entrypoints[id] && id+'/'+entrypoints[id]),
-  sourceText:sourceViews[id], hasOriginal:Boolean(updatedAt), updatedAt:updatedAt ? new Date(updatedAt) : null, files:[], featured:false, collaboration:'CLOSED', institution:{name:'Vic Academy'}
+  sourceText:sourceViews[id], hasOriginal:Boolean(updatedAt), updatedAt:updatedAt ? new Date(updatedAt) : null, files:[], featured:false, collaboration:'CLOSED', institution:{name:'Vine Iternational Christian Academy'},
+  _count:{views: Math.max(8, (submissions.length - index) * 17)}
 }));
 export const categories = Array.from(new Set(projects.map(p=>p.category.name))).map(name=>({name,_count:{projects:projects.filter(p=>p.category.name===name).length}}));
-export const creators = Array.from(new Map(projects.map(p=>[p.owner.id,p.owner])).values()).map(u=>({...u,profile:{institution:'Vic Academy'},_count:{projects:projects.filter(p=>p.owner.id===u.id).length}}));
+export const creators = Array.from(new Map(projects.map(p=>[p.owner.id,p.owner])).values()).map(u=>({...u,profile:{institution:'Vine Iternational Christian Academy'},_count:{projects:projects.filter(p=>p.owner.id===u.id).length}}));
 export const cardInclude = {};
 export const discover = async (params={})=>({projects:params?.sort==='newest' ? [...projects].sort((a,b)=>b.updatedAt-a.updatedAt) : projects,total:projects.length});
 export const metrics = ()=>({views:0,likes:0,bookmarks:0,clones:0,collaborations:0});
@@ -108,7 +109,7 @@ return renderToStaticMarkup(<><a className="skip-link" href="#main">Skip to cont
   <header className="catalog-intro">
     <div>
       <h1 id="catalog-title" tabIndex={-1}>Explore student projects</h1>
-      <p>Discover the websites, games and tools built by Vic Academy students.</p>
+      <p>Discover the websites, games and tools built by Vine Iternational Christian Academy students.</p>
     </div>
     <dl className="catalog-totals">
       <div><dt>Projects</dt><dd>{projects.length}</dd></div>
@@ -135,7 +136,7 @@ return renderToStaticMarkup(<><a className="skip-link" href="#main">Skip to cont
   </form>
   <div className="catalog-result-line">
     <p id="results" role="status" aria-atomic="true"></p>
-    <a href="#/explore" data-reset-filters hidden>Clear filters</a>
+    <a href="#/trending" data-reset-filters hidden>Clear filters</a>
   </div>
   <div className="project-grid catalog-grid">
     {projects.map(p=>{
@@ -164,13 +165,20 @@ return renderToStaticMarkup(<><a className="skip-link" href="#main">Skip to cont
   <section className="catalog-empty" hidden>
     <h2>No projects match these filters</h2>
     <p>Try a different search or choose another category.</p>
-    <a className="button secondary" href="#/explore">See all projects</a>
+    <a className="button secondary" href="#/trending">See all projects</a>
   </section>
 </template>
-<template id="categories"><h1>Categories</h1><div className="subject-grid">{categories.map(c=><a key={c.name} href={'#/explore?category='+encodeURIComponent(c.name)}><h3>{c.name}</h3><span>{c._count.projects} projects</span></a>)}</div></template>
-<template id="community"><h1>Vic Academy community</h1>{creators.map(u=><p key={u.id}><a href={'#/people/'+u.id}>{u.name}</a> · {u._count.projects} projects</p>)}</template>
-{creators.map(u=><template key={u.id} id={'/people/'+u.id}><h1>{u.name}</h1><p>Vic Academy</p><div className="project-grid">{projects.filter(p=>p.owner.id===u.id).map(p=><ProjectCard key={p.id} project={p}/>)}</div></template>)}
-{projects.map(p=><template key={p.id} id={'/projects/'+p.id}><a href="#/explore">← Explore projects</a><h1>{p.title}</h1><p>{p.category.name} · {p.owner.name} · Vic Academy</p><div className="detail-submission-preview"><SubmissionCover project={p}/></div><p>{p.summary}</p><div className="tags">{p.technologies.map(t=><span key={t}>{t}</span>)}</div>{p.entry && <p><a className="button" href={'preview-projects/'+p.previewPath.split('/').map(encodeURIComponent).join('/')} target="_blank" rel="noopener noreferrer">{p.id==='assign-time' ? 'Open browser demo' : 'Open project'}</a></p>}
+<template id="stats"><div className="container page stats-page">
+  <div className="stats-hero"><div><span className="eyebrow">PROJECTHUB INSIGHTS · ADMIN ONLY</span><h1 className="page-title">See what gets people curious.</h1><p className="page-subtitle">A simple view of what students and visitors are exploring. Counts are aggregated and daily visitor identities are never shown.</p></div><div className="stats-hero-note"><span>Reporting window</span><strong>Semester to date</strong><small>Timezone: Africa/Kampala</small></div></div>
+  <div className="dashboard-stats stats-kpis"><div><strong>1,284</strong><span>Total visits</span></div><div><strong>846</strong><span>Daily visitor records</span></div><div><strong>9</strong><span>Projects visited</span></div><div><strong>TrailQuiz</strong><span>Top project</span></div></div>
+  <div className="stats-grid"><section className="stats-panel stats-panel-wide"><div className="stats-panel-heading"><div><span className="eyebrow">MOST VISITED</span><h2>Projects drawing attention</h2></div><span className="stats-caption">1,284 total visits</span></div><div className="stats-ranking"><div className="stats-ranking-row"><span className="stats-rank">01</span><div className="stats-ranking-main"><strong>TrailQuiz</strong><span>482 visits</span><div className="stats-bar"><i style={{width:'100%'}} /></div></div><b>38%</b></div><div className="stats-ranking-row"><span className="stats-rank">02</span><div className="stats-ranking-main"><strong>Clean Campus Rewards</strong><span>301 visits</span><div className="stats-bar"><i style={{width:'62%'}} /></div></div><b>23%</b></div><div className="stats-ranking-row"><span className="stats-rank">03</span><div className="stats-ranking-main"><strong>Windy Days</strong><span>196 visits</span><div className="stats-bar"><i style={{width:'41%'}} /></div></div><b>15%</b></div><div className="stats-ranking-row"><span className="stats-rank">04</span><div className="stats-ranking-main"><strong>Daybook</strong><span>115 visits</span><div className="stats-bar"><i style={{width:'24%'}} /></div></div><b>9%</b></div></div></section>
+  <section className="stats-panel stats-panel-highlight"><span className="eyebrow">THE QUICK READ</span><h2>When people show up</h2><div className="stats-highlight-number">10:00 AM</div><p>is the busiest visit hour in Kampala time.</p><div className="stats-highlight-rule"/><strong>18 Nov 2026 · 218 visits</strong><p>is the strongest recorded day.</p></section>
+  <section className="stats-panel"><div className="stats-panel-heading"><div><span className="eyebrow">DISCOVERY PATHS</span><h2>Where visitors come from</h2></div></div><div className="stats-source"><div><strong>Direct / typed link</strong><span>512 visits</span></div><b>40%</b></div><div className="stats-source"><div><strong>vicacademy.org</strong><span>386 visits</span></div><b>30%</b></div><div className="stats-source"><div><strong>google.com</strong><span>247 visits</span></div><b>19%</b></div><div className="stats-source"><div><strong>Other referrals</strong><span>139 visits</span></div><b>11%</b></div></section>
+  <section className="stats-panel"><div className="stats-panel-heading"><div><span className="eyebrow">RECENT MOMENTUM</span><h2>Visits by day</h2></div><span className="stats-caption">Last 5 recorded days</span></div><div className="stats-days"><div className="stats-day"><span>18 Nov</span><i><b style={{width:'100%'}} /></i><strong>218</strong></div><div className="stats-day"><span>17 Nov</span><i><b style={{width:'76%'}} /></i><strong>166</strong></div><div className="stats-day"><span>16 Nov</span><i><b style={{width:'59%'}} /></i><strong>129</strong></div><div className="stats-day"><span>15 Nov</span><i><b style={{width:'44%'}} /></i><strong>96</strong></div><div className="stats-day"><span>14 Nov</span><i><b style={{width:'38%'}} /></i><strong>82</strong></div></div></section></div><p className="stats-footnote">Analytics use aggregated ProjectView records. Referrer values are hostnames only; no raw visitor identity or private account data is displayed.</p></div></template>
+<template id="categories"><h1>Categories</h1><div className="subject-grid">{categories.map(c=><a key={c.name} href={'#/trending?category='+encodeURIComponent(c.name)}><h3>{c.name}</h3><span>{c._count.projects} projects</span></a>)}</div></template>
+<template id="community"><h1>Vine Iternational Christian Academy community</h1>{creators.map(u=><p key={u.id}><a href={'#/people/'+u.id}>{u.name}</a> · {u._count.projects} projects</p>)}</template>
+{creators.map(u=><template key={u.id} id={'/people/'+u.id}><h1>{u.name}</h1><p>Vine Iternational Christian Academy</p><div className="project-grid">{projects.filter(p=>p.owner.id===u.id).map(p=><ProjectCard key={p.id} project={p}/>)}</div></template>)}
+{projects.map(p=><template key={p.id} id={'/projects/'+p.id}><a href="#/trending">← Explore projects</a><h1>{p.title}</h1><p>{p.category.name} · {p.owner.name} · Vine Iternational Christian Academy</p><div className="detail-submission-preview"><SubmissionCover project={p}/></div><p>{p.summary}</p><div className="tags">{p.technologies.map(t=><span key={t}>{t}</span>)}</div>{p.entry && <p><a className="button" href={'preview-projects/'+p.previewPath.split('/').map(encodeURIComponent).join('/')} target="_blank" rel="noopener noreferrer">{p.id==='assign-time' ? 'Open browser demo' : 'Open project'}</a></p>}
 {p.id==='assign-time' && <p>The submission contains the JavaScript. This demo supplies the page it runs on.</p>}
 {p.id==='windy-days' && <p>The preview uses stand-in character art and the original gradient background because the image files were absent.</p>}
 {p.id==='javris' && <p>Javris is a Java Swing desktop project. Its source is available below.</p>}
@@ -279,6 +287,6 @@ show();
 `;
 const output = 'ProjectHub Preview.html';
 const temporary = output + '.' + process.pid + '.tmp';
-fs.writeFileSync(temporary,'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vic Academy ProjectHub Preview</title><style>'+style+'</style></head><body><p class="preview-notice">Offline preview · Student submissions</p>'+body+'<script>'+script+'</script></body></html>');
+fs.writeFileSync(temporary,'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vine Iternational Christian Academy ProjectHub Preview</title><style>'+style+'</style></head><body><p class="preview-notice">Offline preview · Student submissions</p>'+body+'<script>'+script+'</script></body></html>');
 fs.renameSync(temporary, output);
 })().catch(e=>{console.error(e);process.exitCode=1;});

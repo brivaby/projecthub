@@ -55,7 +55,7 @@ export default async function Profile({
               ? user.profile.institution
               : undefined}
             {user.profile?.showDomainBadge && verifiedVic(user)
-              ? " · Verified Vic Academy"
+              ? " · Verified Vine Iternational Christian Academy"
               : undefined}
           </p>
         </div>

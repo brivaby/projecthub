@@ -13,7 +13,7 @@ export async function securityNotice(
     data: {
       dedupeKey: `security:${event}:${user.id}:${randomUUID()}`,
       recipient: user.email,
-      subject: `Vic Academy ProjectHub: ${event}`,
+      subject: `Vine Iternational Christian Academy ProjectHub: ${event}`,
       html: emailTemplate(event, message, `${process.env.APP_URL}/account`),
     },
   });

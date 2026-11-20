@@ -61,7 +61,7 @@ export default async function ProjectDiscovery({
         <details open={activeFilters.some(([key]) => !["q", "category", "open"].includes(key)) || undefined}>
           <summary>More filters</summary>
           <div className="filter-extra">
-            <label>Visibility<select name="visibility" defaultValue={params.visibility || ""}><option value="">All accessible published projects</option><option value="INSTITUTION">Vic Academy only</option><option value="COURSE">My course projects</option></select></label>
+            <label>Visibility<select name="visibility" defaultValue={params.visibility || ""}><option value="">All accessible published projects</option><option value="INSTITUTION">Vine Iternational Christian Academy only</option><option value="COURSE">My course projects</option></select></label>
             <label className="check-field"><input type="checkbox" name="clone" value="true" defaultChecked={params.clone === "true"} />Open for clone requests</label>
             {[["institution", "Institution"], ["course", "Course"], ["technology", "Technology"], ["language", "Programming language"]].map(([name, label]) => <label key={name}>{label}<input name={name} defaultValue={params[name]} /></label>)}
             <label>License<select name="license" defaultValue={params.license || ""}><option value="">All licenses</option>{licenses.map((x) => <option key={x}>{x}</option>)}</select></label>
@@ -72,8 +72,11 @@ export default async function ProjectDiscovery({
         </details>
         <div className="filter-actions"><button className="button small">Find projects</button><Link className="text-button" href="/trending">Reset filters</Link></div>
       </form>
-      <div className="results-meta">{data.total} project{data.total === 1 ? "" : "s"} to browse{params.q && ` for “${params.q}”`}</div>
-      {activeFilters.length > 0 && <ul className="tags active-filters" aria-label="Active filters">{activeFilters.map(([key, label]) => { const next = new URLSearchParams(params); next.delete(key); next.delete("page"); const value = params[key] === "INSTITUTION" && key === "visibility" ? "Vic Academy only" : params[key] === "COURSE" && key === "visibility" ? "My course projects" : params[key]; return <li key={key}><Link className="button secondary small" href={next.size ? `/trending?${next}` : "/trending"} aria-label={`Remove ${label} filter`}>{label}{key !== "open" && key !== "clone" && ` · ${value}`} <span aria-hidden="true">×</span></Link></li>; })}</ul>}
+      <div className="results-toolbar">
+        <div className="results-meta" aria-live="polite">{data.total} project{data.total === 1 ? "" : "s"} to browse{params.q && ` for “${params.q}”`}</div>
+        <span className="results-hint">Use filters to narrow the field</span>
+      </div>
+      {activeFilters.length > 0 && <ul className="tags active-filters" aria-label="Active filters">{activeFilters.map(([key, label]) => { const next = new URLSearchParams(params); next.delete(key); next.delete("page"); const value = params[key] === "INSTITUTION" && key === "visibility" ? "Vine Iternational Christian Academy only" : params[key] === "COURSE" && key === "visibility" ? "My course projects" : params[key]; return <li key={key}><Link className="button secondary small" href={next.size ? `/trending?${next}` : "/trending"} aria-label={`Remove ${label} filter`}>{label}{key !== "open" && key !== "clone" && ` · ${value}`} <span aria-hidden="true">×</span></Link></li>; })}</ul>}
       {data.total ? <div className="project-grid">{data.projects.map((p) => <ProjectCard key={p.id} project={p} exploreQuery={discoveryQuery} />)}</div> : <Empty title="No projects found" text="Try broadening your search or clearing a few filters." />}
       <div className="pagination">{data.page > 1 && <Link className="button secondary" href={page(data.page - 1)}>Previous</Link>}<span>Page {data.page} of {Math.max(1, Math.ceil(data.total / 12))}</span>{data.page * 12 < data.total && <Link className="button secondary" href={page(data.page + 1)}>Next</Link>}</div>
     </div>

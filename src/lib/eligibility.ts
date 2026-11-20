@@ -1,6 +1,6 @@
 import { HttpError } from "./http-error";
 export const COLLABORATION_RESTRICTION =
-  "Collaboration is currently limited to verified Vic Academy email accounts.";
+  "Collaboration is currently limited to verified Vine Iternational Christian Academy email accounts.";
 export type EligibilityUser = {
   id?: string;
   email?: string | null;

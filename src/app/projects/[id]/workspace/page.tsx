@@ -35,7 +35,7 @@ export default async function Workspace({
       <div className="container page">
         <h1 className="page-title">Collaboration workspace</h1>
         <p className="warning">
-          Collaboration is currently limited to verified Vic Academy email
+          Collaboration is currently limited to verified Vine Iternational Christian Academy email
           accounts. An accepted request is required for workspace access.
         </p>
         <Link href="/account" className="button">

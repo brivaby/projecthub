@@ -174,6 +174,9 @@ export function ProjectCard({
             {m.bookmarks}
           </span>
         </div>
+        <Link className="card-open-link" href={href}>
+          View project <ArrowUpRight size={15} />
+        </Link>
       </div>
     </article>
   );

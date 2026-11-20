@@ -21,6 +21,13 @@ export default async function Categories() {
       <p className="page-subtitle">
         The next idea that inspires you might come from somewhere unexpected.
       </p>
+      <div className="category-summary" aria-label="Category summary">
+        <strong>{categories.length}</strong>
+        <span>subjects to explore</span>
+        <span className="category-summary-divider" />
+        <strong>{categories.reduce((total, category) => total + category._count.projects, 0)}</strong>
+        <span>published projects</span>
+      </div>
       <div className="subject-grid">
         {categories.map((c) => (
           <Link

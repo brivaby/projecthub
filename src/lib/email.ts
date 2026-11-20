@@ -22,7 +22,7 @@ export const templateTitles = {
   RESET: "Sign in securely to your account",
 };
 export function emailTemplate(title: string, message: string, href: string) {
-  return `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#19352c"><h2>Vic Academy ProjectHub<span style="color:#7e9d56">.</span></h2><hr/><h1 style="font-size:24px">${escapeHtml(title)}</h1><p style="white-space:pre-wrap">${escapeHtml(message)}</p><p><a href="${escapeHtml(href)}" style="background:#245b43;color:white;padding:12px 20px;display:inline-block">Review in ProjectHub</a></p><p>Academic ideas. Shared possibilities.</p><small>This link requires secure sign-in. Manage notifications in your profile.</small></div>`;
+  return `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#19352c"><h2>Vine Iternational Christian Academy ProjectHub<span style="color:#a22280">.</span></h2><hr/><h1 style="font-size:24px">${escapeHtml(title)}</h1><p style="white-space:pre-wrap">${escapeHtml(message)}</p><p><a href="${escapeHtml(href)}" style="background:#a22280;color:white;padding:12px 20px;display:inline-block">Review in ProjectHub</a></p><p>Academic ideas. Shared possibilities.</p><small>This link requires secure sign-in. Manage notifications in your profile.</small></div>`;
 }
 export async function deliver(
   to: string,
@@ -44,7 +44,7 @@ export async function deliver(
     messageId,
     from:
       process.env.EMAIL_FROM ||
-      "Vic Academy ProjectHub <notifications@projecthub.local>",
+      "Vine Iternational Christian Academy ProjectHub <notifications@projecthub.local>",
     to,
     subject,
     html,
